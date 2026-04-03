@@ -62,19 +62,19 @@ ROSE 是基于 Claude Code 的科研探索系统，帮助你：
 
 ---
 
-## Step 3: 收集关键词
+## Step 3: 细化研究兴趣描述
 
-基于用户选择的领域，给出推荐关键词列表，使用 AskUserQuestion（multiSelect: true）：
+基于用户选择的领域，引导用户用自然语言描述具体的研究兴趣。使用 AskUserQuestion 逐个领域询问：
 
-**问题**：选择你关注的关键词（也可以在 Other 中补充）
+**问题**：请描述你在 {领域} 方向的具体兴趣（哪些子方向感兴趣？哪些不感兴趣？）
 
-示例推荐逻辑：
-- CV → diffusion, image generation, object detection, segmentation, video understanding
-- NLP → large language model, reasoning, code generation, alignment, RLHF
-- Multimodal → VLM, multimodal reasoning, text-to-image, visual grounding
-- 3D → NeRF, 3D Gaussian Splatting, point cloud, scene reconstruction
-- RL → policy optimization, multi-agent, offline RL, world model
-- AI4Science → protein, molecular, climate, physics-informed
+提供示例引导：
+- CV → "关注 diffusion model 在图像/视频生成和编辑方面的进展，对目标检测不太感兴趣"
+- NLP → "主要关注 LLM reasoning 和 code generation，对传统 NLP（NER、关系抽取）不感兴趣"
+- Multimodal → "关注 VLM 的视觉理解能力，特别是文档/图表理解和多模态推理"
+- 3D → "对 video+3DGS 和动态场景重建感兴趣，纯静态 3DGS/NeRF 不太关注"
+
+用户的回答将直接作为 `## 研究方向描述` 中的段落内容。
 
 ---
 
@@ -133,42 +133,43 @@ ROSE 是基于 Claude Code 的科研探索系统，帮助你：
 ### 6.1 生成 `library/interests.md`
 
 ```markdown
+---
+schema_version: 2
+---
+
 # Research Interests
 
-## Primary Areas
-- {用户选择的领域1}
-- {用户选择的领域2}
-- ...
+## 研究方向描述
 
-## Keywords
-- {关键词1}, {关键词2}, ...
+<!-- 用自然语言描述研究兴趣，供论文筛选时做语义匹配 -->
+
+### {领域1名称}
+{用户在 Step 3 中对该领域的自然语言描述}
+
+### {领域2名称}
+{用户在 Step 3 中对该领域的自然语言描述}
+
+## 代表性高分论文
+
+<!-- 评分 ≥4 的论文描述自动追加，作为兴趣画像的一部分 -->
+<!-- 格式: - [{arxiv_id}] 一句话描述论文核心贡献和你感兴趣的点 -->
+
+## Followed Authors
+
+<!-- 手动添加或评分 ≥4 自动加入 -->
+<!-- 格式: 作者名: {count, last_paper, note} -->
+{如果用户添加了作者，按格式填入}
 
 ## Arxiv Categories
 - {分类1}
 - {分类2}
 - ...
 
-## Keyword Weights
+## 兴趣权重
 
-<!-- 自动维护，反映实际阅读行为。格式: keyword: count -->
-<!-- 分析完成 +1，收藏到 papers/ 额外 +1 -->
-
-## Followed Authors
-- **{作者名}** — 代表作: [{论文标题}]({arxiv_url}) ({arxiv_id}), {机构}
-- ...
-```
-
-如果用户跳过了作者步骤，Followed Authors 段保留空模板：
-```markdown
-## Keyword Weights
-
-<!-- 自动维护，反映实际阅读行为。格式: keyword: count -->
-<!-- 分析完成 +1，收藏到 papers/ 额外 +1 -->
-
-## Followed Authors
-<!-- 添加关注的作者，格式：
-- **作者名** — 代表作: [论文标题](arxiv_url) (arxiv_id), 机构
-可通过 /setup 重新配置，或手动编辑此文件 -->
+<!-- 自动维护，反映实际阅读行为 -->
+<!-- 分析完成时，从论文 tags 中提取主题词 +1；收藏额外 +1 -->
+<!-- 用于对描述匹配的候选论文做二次排序，不作为筛选条件 -->
 ```
 
 ### 6.2 创建目录结构

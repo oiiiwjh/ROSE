@@ -22,7 +22,7 @@ description: "检查并更新 ROSE 系统文件。从 GitHub 获取最新的 ski
 
 | 类别 | 路径 | 更新行为 |
 |------|------|----------|
-| **系统文件** | `.claude/commands/*`, `.claude/skills/*`, `.claude/changelog/*`, `CLAUDE.md`, `README.md`, `ROADMAP.md` | 检查 + 可覆盖 |
+| **系统文件** | `.claude/commands/*`, `.claude/skills/*`, `.claude/changelog/*`, `CLAUDE.md`, `README.md`, `README-zh.md`, `ROADMAP.md` | 检查 + 可覆盖 |
 | **用户数据** | `library/**`（papers, tmp, daily, topics, interests.md） | **绝不触碰** |
 | **用户配置** | `.gitignore`, `LICENSE`, `config.md`, `.claude/settings.local.json`, `.vscode/` | **不覆盖** |
 
@@ -40,7 +40,7 @@ bash .claude/skills/update/check_update.sh
 - `STATUS:up-to-date` → 告知用户"已是最新版本"，结束
 - `STATUS:skip` → 告知用户"网络不可用，跳过更新检查"，结束
 - `STATUS:error` → 告知用户错误原因，结束
-- `STATUS:updates-available` → 继续 Step 2
+- `STATUS:updates-available` → 提取 `LOCAL_VERSION` 和 `REMOTE_VERSION`，继续 Step 2
 
 如果用户指定了 `--check`，展示结果后结束，不执行更新。
 
@@ -53,7 +53,7 @@ bash .claude/skills/update/check_update.sh
 从 `check_update.sh` 的 `FILES:` 输出中提取变更文件列表，按类别分组展示：
 
 ```
-ROSE 有 {N} 个系统文件可更新：
+ROSE 有 {N} 个系统文件可更新（v{LOCAL_VERSION} → v{REMOTE_VERSION}）：
 
 Commands:
   - .claude/commands/xxx.md (新增/修改)
@@ -64,6 +64,7 @@ Skills:
 文档:
   - CLAUDE.md (修改)
   - README.md (修改)
+  - README-zh.md (修改)
 
 Changelog:
   - .claude/changelog/xxx.md (新增)
@@ -86,7 +87,7 @@ git show origin/main:.claude/changelog/{最新日期文件}
 检查用户是否对系统文件有本地改动：
 
 ```bash
-git diff --name-only -- .claude/commands/ .claude/skills/ .claude/changelog/ CLAUDE.md README.md ROADMAP.md
+git diff --name-only -- .claude/commands/ .claude/skills/ .claude/changelog/ CLAUDE.md README.md README-zh.md ROADMAP.md
 ```
 
 - **如果没有本地改动**：直接进入 Step 4
@@ -141,6 +142,42 @@ git checkout origin/main -- <file_path>
 这会用上游版本精确覆盖本地文件，自动 stage 到暂存区。
 
 如果有新增的文件（上游新增但本地不存在的），同样通过 `git checkout origin/main -- <file>` 获取。
+
+---
+
+## Step 5.5: 数据格式迁移
+
+更新系统文件后，检查用户数据是否需要格式迁移。
+
+### 5.5.1 检测 schema 版本
+
+读取 `library/interests.md` 的 frontmatter：
+- 有 `schema_version` 字段 → 取其值
+- 无 frontmatter 或无该字段 → 视为 `schema_version: 1`
+
+### 5.5.2 读取迁移注册表
+
+读取 `.claude/skills/update/migrations.md`，获取最新 schema 版本号和所需迁移步骤。
+
+### 5.5.3 执行迁移（如需要）
+
+- **如果本地 schema_version 已是最新**：跳过，无需迁移
+- **如果本地 schema_version < 最新版本**：
+  1. 展示迁移说明：哪些文件的格式将被调整、具体变更内容
+  2. 使用 AskUserQuestion 确认：
+     - **执行迁移（推荐）** — 自动转换格式，保留所有原有数据
+     - **跳过迁移** — 保持原格式（部分 skill 功能可能异常）
+     - **运行 /setup 重新配置** — 从头配置研究兴趣（原有数据会被覆盖）
+  3. 如果确认迁移：按 `migrations.md` 中的步骤逐条执行，完成后更新 `schema_version`
+  4. 如果跳过：警告用户 `/daily-papers` 等依赖新格式的功能可能异常
+
+### 5.5.4 迁移结果
+
+迁移完成后展示：
+```
+数据格式已迁移（schema v{old} → v{new}）：
+  - library/interests.md: Keywords → 研究方向描述，新增代表性高分论文段落
+```
 
 ---
 

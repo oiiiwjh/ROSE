@@ -42,6 +42,7 @@ CHANGED=$(git diff --name-only HEAD..origin/main -- \
     .claude/changelog/ \
     CLAUDE.md \
     README.md \
+    README-zh.md \
     ROADMAP.md \
     2>/dev/null)
 
@@ -51,7 +52,16 @@ if [ -z "$CHANGED" ]; then
 fi
 
 COUNT=$(echo "$CHANGED" | wc -l | tr -d ' ')
+
+# Extract version numbers from CLAUDE.md for comparison (macOS-compatible, no -P flag)
+LOCAL_VER=$(sed -n 's/.*当前版本: v\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p' CLAUDE.md 2>/dev/null)
+LOCAL_VER=${LOCAL_VER:-unknown}
+REMOTE_VER=$(git show origin/main:CLAUDE.md 2>/dev/null | sed -n 's/.*当前版本: v\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/p' 2>/dev/null)
+REMOTE_VER=${REMOTE_VER:-unknown}
+
 echo "STATUS:updates-available"
 echo "COUNT:$COUNT"
+echo "LOCAL_VERSION:$LOCAL_VER"
+echo "REMOTE_VERSION:$REMOTE_VER"
 echo "FILES:"
 echo "$CHANGED"

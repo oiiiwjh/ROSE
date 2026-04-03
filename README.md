@@ -1,181 +1,188 @@
 # ROSE — Research Operating System for Erudition
 
-基于 [Claude Code](https://claude.ai/claude-code) Skills 的个人科研探索系统。通过 slash commands 在终端中完成论文阅读分析、每日推荐、方向调研、论文库管理等工作流，所有产出结构化存储在本地。
+[中文文档](./README-zh.md)
 
-## 前置条件
+A personal research exploration system built on [Claude Code](https://claude.ai/claude-code) Skills. Use slash commands in the terminal to read papers, get daily recommendations, survey research topics, manage your paper library, and more — all outputs are structured and stored locally.
 
-- [Claude Code](https://claude.ai/claude-code) CLI 已安装
-- Python 3.10+（仅使用标准库，无需额外依赖）
-- 网络可访问 arxiv.org 和 alphaxiv.org
+## Prerequisites
 
-## 快速开始
+- [Claude Code](https://claude.ai/claude-code) CLI installed
+- Python 3.10+ (stdlib only, no external dependencies)
+- Network access to arxiv.org and alphaxiv.org
+
+## Quick Start
 
 ```bash
-# 1. 进入项目目录
+# 1. Enter the project directory
 cd rose
 
-# 2. 首次使用，运行设置向导（交互式配置研究兴趣）
+# 2. First-time setup wizard (interactive research interest configuration)
 /setup
 
-# 3. 开始使用
-/daily-papers              # 获取今日论文推荐
-/read-paper 2401.12345     # 深度分析一篇论文
-/survey-topic 3D Gaussian Splatting   # 快速掌握一个方向
+# 3. Start using
+/daily-papers              # Get today's paper recommendations
+/read-paper 2401.12345     # Deep analysis of a paper
+/survey-topic 3D Gaussian Splatting   # Quick survey of a research topic
 ```
 
-## 功能一览
+## Features
 
-### `/read-paper` — 论文深度阅读
+### `/read-paper` — Deep Paper Reading
 
-分析一篇论文并生成结构化报告，支持选择分析深度、关联代码仓库、后续追问和补充信息源。
+Analyze a paper and generate a structured report. Supports analysis depth selection, code repository linking, follow-up Q&A, and supplementary sources.
 
 ```bash
-# 首次分析（支持 arxiv URL、ID、本地 PDF）
+# First analysis (supports arxiv URL, ID, local PDF)
 /read-paper 2401.12345
 /read-paper https://arxiv.org/abs/2401.12345
 /read-paper ./paper.pdf
 
-# 直接指定分析深度
-/read-paper 2401.12345 --detailed    # 深度分析（详细拆解方法、公式、实验）
-/read-paper 2401.12345 --brief       # 快速概览（800-1200 字核心速览）
+# Specify analysis depth directly
+/read-paper 2401.12345 --detailed    # Deep analysis (methods, formulas, experiments)
+/read-paper 2401.12345 --brief       # Quick overview (800-1200 word summary)
 
-# 关联代码仓库一起分析
+# Analyze with associated code repository
 /read-paper 2401.12345 --repo https://github.com/author/repo
 
-# 自定义分析角度
-/read-paper 2401.12345 --prompt 重点分析 loss 函数设计
+# Custom analysis angle
+/read-paper 2401.12345 --prompt Focus on the loss function design
 
-# 补充信息源（对已有论文追加分析）
+# Add supplementary sources (for existing papers)
 /read-paper 2401-12345 --supplement repo:https://github.com/author/repo
 /read-paper 2401-12345 --supplement blog:https://example.com/blog-post
 
-# 对已分析过的论文追问
-/read-paper 2401-12345 这篇的 attention 机制和标准 transformer 有什么区别？
+# Follow-up Q&A on previously analyzed papers
+/read-paper 2401-12345 How does the attention mechanism differ from standard transformer?
 ```
 
-**工作流程**：获取论文 → 选择分析深度（深度/概览）→ 创建临时目录（`library/tmp/`）→ 生成 meta.md + analysis.md → 支持 Q&A 追问与补充信息源 → 结束时询问是否收藏到正式库（`library/papers/`）
+**Workflow**: Fetch paper → Choose analysis depth (detailed/brief) → Create temp directory (`library/tmp/`) → Generate meta.md + analysis.md → Q&A and supplementary sources → Optionally collect to permanent library (`library/papers/`)
 
-**分析模板**：两个独立模板文件位于 `.claude/skills/read-paper/`，可根据需要自定义修改：
-- `template-detailed.md` — 深度分析（七大章节，含代码实现分析）
-- `template-brief.md` — 快速概览（800-1200 字速览）
+**Analysis Templates**: Two standalone template files in `.claude/skills/read-paper/`, customizable:
+- `template-detailed.md` — Deep analysis (7 sections, including code implementation analysis)
+- `template-brief.md` — Quick overview (800-1200 word summary)
 
-### `/daily-papers` — 每日论文推荐
+### `/daily-papers` — Daily Paper Recommendations
 
-基于你的研究兴趣，从 arxiv 获取最新论文并智能筛选推荐。
+Fetches latest papers from arxiv and intelligently filters recommendations based on your research interests.
 
 ```bash
-/daily-papers                        # 今日推荐
-/daily-papers --date 2026-04-01      # 指定日期
-/daily-papers --days 3               # 回溯 3 天
-/daily-papers --category cs.CV,cs.AI # 覆盖分类
+/daily-papers                        # Today's recommendations
+/daily-papers --date 2026-04-01      # Specific date
+/daily-papers --days 3               # Look back 3 days
+/daily-papers --category cs.CV,cs.AI # Override categories
 ```
 
-**工作流程**：Python 脚本批量抓取论文列表 → 保存 CSV → 基于 interests.md 筛选排序 → 批量获取精选论文详情 → 生成推荐报告 + paper stubs → 可直接选择某篇进行深度分析或快速概览
+**Workflow**: Python script batch-fetches paper listings → Saves CSV → Filters and ranks based on interests.md → Batch-fetches selected paper details → Generates recommendation report + paper stubs → Optionally deep-read or quick-read any paper
 
-### `/survey-topic` — 研究方向快速掌握
+### `/survey-topic` — Quick Research Topic Survey
 
-给定一个研究方向，通过多轮搜索生成结构化综述。
+Given a research topic, generates a structured survey through multi-round searching.
 
 ```bash
 /survey-topic 3D Gaussian Splatting
-/survey-topic 视觉语言模型中的幻觉问题
+/survey-topic Hallucination in Vision-Language Models
 ```
 
-**产出**：`library/topics/{slug}/overview.md`（综述）+ `paper_list.md`（论文列表）+ 核心论文的 meta stubs
+**Output**: `library/topics/{slug}/overview.md` (survey) + `paper_list.md` (paper list) + meta stubs for key papers
 
-### `/analyze-code` — 代码仓库分析
+### `/analyze-code` — Code Repository Analysis
 
-分析代码仓库结构和关键实现，可选关联论文进行交叉分析。
+Analyzes code repository structure and key implementations, optionally cross-referenced with a paper.
 
 ```bash
 /analyze-code /path/to/repo
 /analyze-code https://github.com/author/repo --paper 2401-12345
 ```
 
-### `/manage-library` — 论文库管理
+### `/manage-library` — Paper Library Management
 
-浏览、搜索和管理本地论文库。
-
-```bash
-/manage-library                      # 统计信息
-/manage-library --search diffusion   # 全文搜索
-/manage-library --list recent        # 最近论文
-/manage-library --list unread        # 未分析的论文
-/manage-library --tag 2401-12345 vae,generation  # 打标签
-/manage-library --tmp                # 查看临时论文
-/manage-library --promote 2401-12345 # 临时论文转正
-/manage-library --clean              # 检查不完整条目
-/manage-library --authors            # 查看关注的作者列表
-/manage-library --rate 2401-12345 5  # 为论文评分（1-5）
-```
-
-### `/session-digest` — 会话总结归档
-
-回顾当前会话的所有活动，生成知识记录和系统变更日志。
+Browse, search, and manage your local paper library.
 
 ```bash
-/session-digest                  # 完整流程（采集→归档→优化建议）
-/session-digest --skip-optimize  # 跳过 skill 优化建议
+/manage-library                      # Statistics
+/manage-library --search diffusion   # Full-text search
+/manage-library --list recent        # Recent papers
+/manage-library --list unread        # Unanalyzed papers
+/manage-library --tag 2401-12345 vae,generation  # Add tags
+/manage-library --tmp                # View temporary papers
+/manage-library --promote 2401-12345 # Promote temp paper to permanent
+/manage-library --clean              # Check incomplete entries
+/manage-library --authors            # View followed authors list
+/manage-library --rate 2401-12345 5  # Rate a paper (1-5)
 ```
 
-**产出**：`library/daily/{date}.md`（知识记录）+ `.claude/changelog/{date}.md`（系统变更）
+### `/session-digest` — Session Summary & Archive
 
-### `/setup` — 首次使用引导
+Reviews all activities in the current session and generates knowledge records and system changelogs.
 
-交互式配置研究兴趣、关注作者，生成个性化的 `library/interests.md`。
+```bash
+/session-digest                  # Full workflow (collect → archive → optimization suggestions)
+/session-digest --skip-optimize  # Skip skill optimization suggestions
+```
+
+**Output**: `library/daily/{date}.md` (knowledge record) + `.claude/changelog/{date}.md` (system changes)
+
+### `/setup` — First-Time Setup
+
+Interactive configuration of research interests and followed authors, generates personalized `library/interests.md`.
 
 ```bash
 /setup
 ```
 
-### `/publish` — 发布公共版本
+### `/publish` — Publish Public Version
 
-从当前仓库提取干净的 public 版本到指定目录，跳过个人数据，生成通用模板和示例内容。
-
-```bash
-/publish                          # 默认输出到 ../rose-public/
-/publish ~/projects/rose-public/  # 指定输出路径
-```
-
-### `/update` — 检查并更新系统文件
-
-从 GitHub 获取最新的 skills、commands 和文档，安全更新到本地。只更新系统文件，绝不触碰用户数据（`library/`）。
+Extracts a clean public version from the current repo to a target directory, skipping personal data and generating universal templates and sample content.
 
 ```bash
-/update                  # 完整流程（检查 → 展示变更 → 确认 → 更新）
-/update --check          # 仅检查是否有更新
+/publish                          # Default output to ../rose-public/
+/publish ~/projects/rose-public/  # Specify output path
 ```
 
-**自动检查**：每次新对话开始时，ROSE 会自动检查 GitHub 是否有更新并提示。
+### `/update` — Check & Update System Files
 
-## 数据存储结构
+Fetches latest skills, commands, and documentation from GitHub and safely updates locally. Only updates system files, never touches user data (`library/`).
+
+```bash
+/update                  # Full workflow (check → show changes → confirm → update)
+/update --check          # Check only
+```
+
+**Auto-check**: At the start of each new conversation, ROSE automatically checks GitHub for updates and notifies you.
+
+## Data Storage Structure
 
 ```
 library/
-├── interests.md                    # 研究兴趣配置（关键词、领域、arxiv 分类）
-├── tmp/                            # 临时论文（分析后未收藏的）
-│   └── .gitkeep
-├── papers/                         # 正式收藏的论文
-│   └── 1706-03762-transformer/     # 示例论文
-│       ├── meta.md                 # 元信息（frontmatter + 概要 + abstract + 翻译）
-│       └── analysis.md             # 详细分析报告
-├── topics/                         # 研究方向综述
-│   └── .gitkeep
-└── daily/                          # 每日记录
-    └── .gitkeep
+├── interests.md                    # Research interest configuration (keywords, areas, arxiv categories)
+├── tmp/                            # Temporary papers (analyzed but not yet collected)
+│   └── ...
+├── papers/                         # Permanently collected papers
+│   └── 1706-03762-transformer/     # Example paper
+│       ├── meta.md                 # Metadata (frontmatter + summary + abstract + translation)
+│       ├── analysis.md             # Detailed analysis report
+│       ├── qa.md                   # Q&A records
+│       ├── sources.md              # Information sources (arxiv, GitHub, discussions)
+│       └── notes.md                # Personal notes
+├── topics/                         # Research topic surveys
+│   └── {topic-slug}/
+│       ├── overview.md
+│       └── paper_list.md
+└── daily/                          # Daily records
+    └── {YYYY-MM-DD}.md             # Paper recommendations + knowledge outputs
 ```
 
-### 论文目录命名规则
+### Paper Directory Naming Convention
 
 `{arxiv_id}-{method_slug}`
 
-- arxiv ID 中的 `.` 替换为 `-`
-- method_slug 是论文核心方法/模型的简短英文标识
-- 示例：`1706-03762-transformer`、`2401-12345-nerf`
+- `.` in arxiv ID replaced with `-`
+- method_slug is a short English identifier for the paper's core method/model
+- Examples: `1706-03762-transformer`, `2401-12345-nerf`
 
-### meta.md 格式
+### meta.md Format
 
-每篇论文的 meta.md 包含 YAML frontmatter 和三段正文：
+Each paper's meta.md contains YAML frontmatter and three body sections:
 
 ```markdown
 ---
@@ -186,45 +193,45 @@ arxiv_id: "2604.01030"
 url: "https://arxiv.org/abs/2604.01030"
 tags: [3dgs, feed-forward, differentiable-optimization]
 status: meta_only | analyzed | reviewed
-rating: 4  # 可选，1-5 评分
+rating: 4  # Optional, 1-5 rating
 ---
 
-## 概要总结
-（中文 2-3 句话概括核心问题、方法和贡献）
+## Summary
+(2-3 sentences summarizing the core problem, method, and contribution)
 
 ## Abstract
-（英文原文）
+(Original English abstract)
 
-## 摘要翻译
-（中文翻译）
+## Abstract Translation
+(Chinese translation)
 ```
 
-## 自定义研究兴趣
+## Customizing Research Interests
 
-编辑 `library/interests.md` 配置你的研究方向：
+Edit `library/interests.md` to configure your research areas:
 
 ```markdown
 # Research Interests
 
 ## Primary Areas
-- 你的主要研究方向（中英文均可）
+- Your primary research areas
 
 ## Keywords
-- 用于论文筛选的关键词列表
+- Keywords for paper filtering
 
 ## Arxiv Categories
 - cs.CV
 - cs.AI
-- （你关注的 arxiv 分类）
+- (arxiv categories you follow)
 ```
 
-此配置影响 `/daily-papers` 的筛选排序和 `/survey-topic` 的搜索范围。
+This configuration affects `/daily-papers` filtering/ranking and `/survey-topic` search scope.
 
-## 系统架构
+## System Architecture
 
 ```
 .claude/
-├── commands/           # Slash command 入口（薄包装）
+├── commands/           # Slash command entry points (thin wrappers)
 │   ├── read-paper.md
 │   ├── daily-papers.md
 │   ├── survey-topic.md
@@ -234,69 +241,69 @@ rating: 4  # 可选，1-5 评分
 │   ├── setup.md
 │   ├── publish.md
 │   └── update.md
-├── skills/             # Skill 实现（prompt + 脚本）
+├── skills/             # Skill implementations (prompts + scripts)
 │   ├── read-paper/
-│   │   ├── read-paper.md       # skill prompt
-│   │   ├── template-detailed.md # 深度分析模板
-│   │   ├── template-brief.md   # 快速概览模板
-│   │   └── arxiv_fetch.py      # 论文元信息获取
+│   │   ├── read-paper.md       # Skill prompt
+│   │   ├── template-detailed.md # Deep analysis template
+│   │   ├── template-brief.md   # Quick overview template
+│   │   └── arxiv_fetch.py      # Paper metadata fetcher
 │   ├── daily-papers/
 │   │   ├── daily-papers.md
-│   │   └── arxiv_daily.py      # 批量论文列表抓取 + alphaxiv 详情
+│   │   └── arxiv_daily.py      # Batch paper listing + alphaxiv details
 │   ├── survey-topic/
 │   ├── analyze-code/
 │   ├── manage-library/
 │   ├── session-digest/
 │   ├── setup/
 │   ├── publish/
-│   └── update/         # 自动更新检查 + check_update.sh
-└── changelog/          # 系统变更日志
+│   └── update/         # Auto-update check + check_update.sh
+└── changelog/          # System changelogs
 ```
 
-**设计原则**：
+**Design Principles**:
 
-- **commands 是薄入口**：只引用 skills/ 中的 prompt，不含逻辑
-- **skills 独立自治**：每个 skill 的 prompt 和脚本放在同一目录
-- **Python 脚本仅用标准库**：零外部依赖，随处可运行
-- **数据与逻辑分离**：`library/` 存数据，`.claude/` 存逻辑
+- **Commands are thin wrappers**: Only reference prompts in skills/, no logic
+- **Skills are self-contained**: Each skill's prompt and scripts live in the same directory
+- **Python scripts use stdlib only**: Zero external dependencies, runs anywhere
+- **Data-logic separation**: `library/` stores data, `.claude/` stores logic
 
-## 扩展与演进
+## Extending & Evolving
 
-- **添加新 skill**：在 `.claude/skills/` 下建子目录 → 写 prompt 和脚本 → 在 `.claude/commands/` 加入口 → 更新 CLAUDE.md
-- **修改现有 skill**：直接编辑 `.claude/skills/{name}/*.md`，立即生效
-- **功能规划**：详见 [ROADMAP.md](./ROADMAP.md)
+- **Add a new skill**: Create subdirectory in `.claude/skills/` → Write prompt and scripts → Add entry in `.claude/commands/` → Update CLAUDE.md
+- **Modify existing skill**: Edit `.claude/skills/{name}/*.md` directly, takes effect immediately
+- **Feature roadmap**: See [ROADMAP.md](./ROADMAP.md)
 
 ## Contributing
 
-欢迎贡献新 skill、优化现有功能或修复 bug。
+Contributions welcome — new skills, feature improvements, or bug fixes.
 
-**贡献流程**：
+**Workflow**:
 
-1. Fork 本仓库并 clone 到本地
-2. 在你的本地副本中进行修改（新增/修改 skill、修复 bug 等）
-3. 运行 `/publish` 生成干净的发布版本，确认改动在 public 版本中表现正确
-4. 提交 PR，说明你的改动内容和动机
+1. Fork this repo and clone locally
+2. Make your changes (add/modify skills, fix bugs, etc.)
+3. Run `/publish` to generate a clean release version, verify your changes work correctly
+4. Submit a PR describing your changes and motivation
 
-**添加新 Skill**：
+**Adding a New Skill**:
 
-1. 在 `.claude/skills/{name}/` 下创建 skill 目录，编写 prompt（`.md`）和脚本（如需要）
-2. 在 `.claude/commands/{name}.md` 添加 command 入口
-3. 更新 `CLAUDE.md` 的 Skills 表和 `README.md` 的功能说明
-4. Python 脚本仅使用标准库，不引入外部依赖
+1. Create skill directory at `.claude/skills/{name}/`, write prompt (`.md`) and scripts (if needed)
+2. Add command entry at `.claude/commands/{name}.md`
+3. Update the Skills table in `CLAUDE.md` and feature descriptions in `README.md` / `README-zh.md`
+4. Python scripts must use stdlib only, no external dependencies
 
-**注意事项**：
+**Notes**:
 
-- 不要提交个人数据（`library/papers/`、`library/tmp/`、`library/daily/` 等）
-- 不要提交 `.claude/settings.local.json`（已在 `.gitignore` 中排除）
-- Skill prompt 使用中文，代码注释使用英文
+- Do not commit personal data (`library/papers/`, `library/tmp/`, `library/daily/`, etc.)
+- Do not commit `.claude/settings.local.json` (excluded in `.gitignore`)
+- Skill prompts are in Chinese, code comments in English
 
-## 相关文件
+## Related Files
 
-| 文件 | 用途 |
-|------|------|
-| `CLAUDE.md` | Claude Code 项目指令（系统约定和内部规范） |
-| `ROADMAP.md` | 功能规划与想法收集 |
-| `library/interests.md` | 研究兴趣配置 |
+| File | Purpose |
+|------|---------|
+| `CLAUDE.md` | Claude Code project instructions (conventions and internal rules) |
+| `ROADMAP.md` | Feature roadmap and idea collection |
+| `library/interests.md` | Research interest configuration |
 
-## 参考内容
+## References
 https://www.alphaxiv.org/skills/alphaxiv-paper-lookup/SKILL.md

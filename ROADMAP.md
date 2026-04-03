@@ -2,32 +2,49 @@
 
 > 科研探索系统的功能规划与演进路线。随时在「想法收集」中添加新灵感。
 
-## v1.0 — 基础分析与存储 ✅
+## v1.0.0 — 基础分析与存储 ✅
 
 核心的论文阅读、推荐、调研、管理功能。
 
-- [x] `/read-paper` 单篇论文深度分析（支持 --repo、--prompt、--detailed/--brief、--supplement、Q&A 追问）
-- [x] `/daily-papers` 每日论文推荐（兴趣筛选、批量抓取、推荐后可选深度/快速阅读）
+- [x] `/read-paper` 单篇论文深度分析（支持 Q&A 追问）
+- [x] `/daily-papers` 每日论文推荐（兴趣筛选、批量抓取）
 - [x] `/survey-topic` 研究方向快速综述
 - [x] `/analyze-code` 代码仓库分析与论文交叉引用
 - [x] `/manage-library` 本地论文库管理（统计、搜索、列表、标签）
 - [x] `/session-digest` 会话总结归档
 - [x] `/setup` 首次使用引导
-- [x] `/publish` 公共版本发布
 - [x] `library/` 本地存储体系（papers/tmp/topics/daily）
 - [x] meta.md 三段式格式（概要总结 + Abstract + 摘要翻译）
 - [x] tmp → papers 收藏确认机制
-- [x] 分析深度选择（深度分析 / 快速概览），模板外置为独立文件
+
+---
+
+## v1.0.1 — 增量改进 ✅
+
+在 v1.0.0 基础上的体验优化和功能增强。
+
+- [x] 分析深度选择（深度分析 / 快速概览），模板外置为 `template-detailed.md` / `template-brief.md`
+- [x] `--detailed` / `--brief` / `--supplement` / `--repo` / `--prompt` 参数支持
+- [x] 行为增强 interests：分析/收藏时自动更新关键词权重（`## Keyword Weights`）
+- [x] 论文评分（1-5）+ 评分 ≥4 自动关注作者（`## Followed Authors`）
+- [x] `/manage-library --authors` 作者管理 + `--rate` 评分修改
+- [x] `/daily-papers` 关注作者加权 + `[关注作者]` 标注
+- [x] `/publish` 公共版本发布与增量更新
+- [x] `/update` 系统文件远程更新检查
+- [x] `/read-paper` 本地库优先搜索与完整性检查（Step 0）
+- [x] 版本控制机制（CLAUDE.md 为版本权威来源）
 
 ---
 
 ## v1.5 — 体验打磨与智能推荐 🔜
 
-### 短期体验打磨
+> 里程碑目标：完成后升级为 v1.1.0
+
+### 体验打磨
 
 #### 1. 分析模板迭代（优先级：高）
 
-**目标**：根据实际输出效果调整 `template-detailed.md` 和 `template-brief.md` 的粒度和侧重点。
+**目标**：根据实际输出效果调整模板粒度和侧重点。
 
 **方案**：
 - 在实际使用中收集不满意的分析输出，针对性调整模板结构
@@ -38,7 +55,7 @@
 
 #### 2. PDF 本地读取（优先级：高）
 
-**目标**：`arxiv_fetch.py` 目前只拿到 abstract，PDF 全文分析依赖 AlphaXiv/WebSearch 补充。加入 PDF 下载 + 本地读取能力。
+**目标**：加入 PDF 下载 + 本地读取能力，减少对外部服务依赖。
 
 **方案**：
 - 在 `arxiv_fetch.py` 中新增 `--download` 参数，下载 PDF 到论文目录（`source.pdf`）
@@ -47,36 +64,7 @@
 
 **涉及文件**：`arxiv_fetch.py`、`read-paper` skill
 
-#### 3. 行为增强 interests（优先级：高）✅
-
-**目标**：分析/深读论文后自动更新 `interests.md` 中关键词的权重。
-
-**方案**：
-- `/read-paper` 分析完成时实时更新关键词权重（+1），收藏时额外 +1
-- `/session-digest` 做校验和补漏
-- 在 `interests.md` 新增 `## Keyword Weights` 段，格式如 `diffusion: 12`（累计计数）
-- `/daily-papers` 筛选时读取权重进行加权排序
-
-**涉及文件**：`interests.md`、`read-paper` skill、`session-digest` skill、`daily-papers` skill
-
-### 智能推荐与反馈闭环
-
-#### 4. 论文态度评分 + 作者/机构关注（优先级：高）✅
-
-**目标**：看完论文后给评分，同时更新作者/机构关注度。
-
-**方案**：
-- 在 `/read-paper` 的输出摘要和收藏确认步骤中，增加 1-5 评分（AskUserQuestion）
-- 评分写入 `meta.md` frontmatter（`rating: 4`）
-- 在 `/manage-library` 中新增操作：
-  - `--authors` — 查看关注的作者列表及统计
-  - `--rate <paper_id> <score>` — 补充/修改论文评分
-- 评分 ≥4 的论文作者自动加入 `interests.md` 的 `## Followed Authors`
-- `/daily-papers` 排序时对关注作者论文加权，并标注 `[关注作者]`
-
-**涉及文件**：`read-paper` skill、`manage-library` skill、`daily-papers` skill、`interests.md`
-
-#### 5. Explore-Exploit 平衡（优先级：中）
+#### 3. Explore-Exploit 平衡（优先级：中）
 
 **目标**：每日推荐中平衡"兴趣相关"和"跨领域探索"。
 
@@ -147,21 +135,36 @@
 
 ## 想法收集
 
-> 在这里随时记录新灵感，后续整理到对应版本中。格式：`- [日期] 想法描述`
+> 随时记录新灵感。格式：`- [日期] 想法描述`
+> 每次 `/session-digest` 或 `/publish` 时整理：已完成标 `[已整合 → vX.X.X]`，已纳入规划标 `[已规划 → vX.X]`。
 
-- [2026-04-02] 根据行为自动增强 interests 权重
-- [2026-04-02] 维护作者/机构关注列表，推荐时加权
-- [2026-04-02] 论文态度评分影响推荐
-- [2026-04-02] 知识复习功能（艾宾浩斯遗忘曲线）
-- [2026-04-02] 每日推荐中平衡 explore 和 exploit
+### 已整合
+
+- ~~[2026-04-02] 根据行为自动增强 interests 权重~~ [已整合 → v1.0.1]
+- ~~[2026-04-02] 维护作者/机构关注列表，推荐时加权~~ [已整合 → v1.0.1]
+- ~~[2026-04-02] 论文态度评分影响推荐~~ [已整合 → v1.0.1]
+
+### 已规划
+
+- ~~[2026-04-02] 知识复习功能（艾宾浩斯遗忘曲线）~~ [已规划 → v2.0]
+- ~~[2026-04-02] 每日推荐中平衡 explore 和 exploit~~ [已规划 → v1.5]
+- ~~[2026-04-03] 分析模板根据实际输出效果迭代，支持 examples/ 和自定义 templates/~~ [已规划 → v1.5]
+- ~~[2026-04-03] PDF 下载+本地读取，减少对外部服务依赖~~ [已规划 → v1.5]
+- ~~[2026-04-03] 论文间关联图谱（引用关系、同作者、同方向）~~ [已规划 → v2.0]
+- ~~[2026-04-03] /compare-papers skill：对比两篇论文的方法差异~~ [已规划 → v2.0]
+- ~~[2026-04-03] daily-papers 结合 Semantic Scholar API 补充引用量排序~~ [已规划 → v2.0]
+- ~~[2026-04-03] survey-topic 与 library 已有论文自动关联~~ [已规划 → v2.0]
+- ~~[2026-04-03] shared/ 目录放跨 skill 共用工具（如 arxiv_fetch.py）~~ [已规划 → v2.0]
+
+### 待整理
+
 - [2026-04-02] 作者推荐不应只给名字，应结合兴趣+论文质量+引用量
-- [2026-04-03] 分析模板根据实际输出效果迭代，支持 examples/ 和自定义 templates/
-- [2026-04-03] PDF 下载+本地读取，减少对外部服务依赖
-- [2026-04-03] 论文间关联图谱（引用关系、同作者、同方向）
-- [2026-04-03] /compare-papers skill：对比两篇论文的方法差异
-- [2026-04-03] daily-papers 结合 Semantic Scholar API 补充引用量排序
-- [2026-04-03] survey-topic 与 library 已有论文自动关联
-- [2026-04-03] shared/ 目录放跨 skill 共用工具（如 arxiv_fetch.py）
-- [2026-04-03] 爬取或涉及到论文相关信息搜集，可以后续添加X/xhs等难直接爬取到平台。
-- [2026-04-03] 支持用户添加自己喜欢的X博主等，可以参考https://github.com/freemty/yuanbo-skills/tree/main/no-more-fomo中推送关注消息的功能。
-- https://github.com/VisionXLab/CitationClaw计划添加引用量
+- [2026-04-03] 爬取或涉及到论文相关信息搜集，可以后续添加X/xhs等难直接爬取到平台
+- [2026-04-03] 支持用户添加自己喜欢的X博主等，可以参考 https://github.com/freemty/yuanbo-skills/tree/main/no-more-fomo 中推送关注消息的功能，以及https://github.com/zarazhangrui/follow-builders
+- [2026-04-03] https://github.com/VisionXLab/CitationClaw 计划添加引用量
+- ~~[2026-04-03] WebSearch 多源结果记录：将搜索中获取的 arxiv/github/reddit/x 等信息分类存储到论文目录~~ [已整合 → v1.0.2]
+- ~~[2026-04-03] interests.md 从关键词匹配改为语义描述+模糊匹配~~ [已整合 → v1.0.2]
+- skill计划：考虑将论文分析结果整合成html版本的网页，方便组会分享。（考虑多种内容进行转换，例如单篇论文/多篇论文/topics分析/研究规划/研究兴趣等）参考skill：https://github.com/zarazhangrui/frontend-slides
+- skill计划：考虑添加图像生成功能，参考https://github.com/ZeroLu/awesome-nanobanana-pro中的skill设计
+- skill计划：添加https://github.com/nextlevelbuilder/ui-ux-pro-max-skill 中的用户界面设计功能
+- skill分类规划，思考如何对skills进行分类？或者分子目录等

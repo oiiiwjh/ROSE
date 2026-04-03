@@ -56,7 +56,7 @@ GitHub 仓库地址：`https://github.com/oiiiwjh/ROSE`
   .claude/skills/setup/
   .claude/skills/publish/
   .claude/changelog/*
-  README.md, CLAUDE.md, ROADMAP.md, config.md
+  README.md, README-zh.md, CLAUDE.md, ROADMAP.md, config.md
 
 将跳过的文件:
   .claude/settings.local.json
@@ -72,7 +72,7 @@ GitHub 仓库地址：`https://github.com/oiiiwjh/ROSE`
   LICENSE (MIT)
 
 将微调的文档:
-  README.md — 快速开始改为 /setup，示例改为 transformer
+  README.md (EN) / README-zh.md (ZH) — 快速开始改为 /setup，示例改为 transformer
   CLAUDE.md — Skills 表添加 /setup 和 /publish
 
 将执行: git init + 首次 commit
@@ -115,11 +115,13 @@ GitHub 仓库地址：`https://github.com/oiiiwjh/ROSE`
 ### 2.2 文档文件（复制后需微调）
 
 ```
-README.md
+README*.md                     — 自动扫描所有语言版本（README.md, README-zh.md, ...）
 CLAUDE.md
 ROADMAP.md
 config.md
 ```
+
+**复制方式**：使用 glob `README*.md` 自动检测所有语言版本，新增语言无需手动更新列表。
 
 ### 2.3 Changelog（原样复制）
 
@@ -193,6 +195,10 @@ mkdir -p library/daily/
 在目标目录的 `library/interests.md` 创建通用模板：
 
 ```markdown
+---
+schema_version: 2
+---
+
 # Research Interests
 
 ## Primary Areas
@@ -203,12 +209,28 @@ mkdir -p library/daily/
 - Multimodal / Vision-Language
 -->
 
-## Keywords
-<!-- 用于 /daily-papers 筛选和 /survey-topic 搜索 -->
+## 研究方向描述
+
+<!-- 用自然语言描述研究兴趣，供论文筛选时做语义匹配 -->
+<!-- 通过 /setup 配置，或手动编辑 -->
 <!-- 示例:
-- diffusion, image generation, text-to-image
-- large language model, reasoning, alignment
+### Computer Vision
+关注 diffusion model 在图像/视频生成方面的进展，对目标检测不太感兴趣。
 -->
+
+## 代表性高分论文
+
+<!-- 评分 ≥4 的论文描述自动追加，作为兴趣画像的一部分 -->
+<!-- 格式: - [{arxiv_id}] 一句话描述论文核心贡献和你感兴趣的点 -->
+
+## Followed Authors
+
+<!-- 手动添加或评分 ≥4 自动加入 -->
+<!-- 格式: 作者名: {count, last_paper, note} -->
+
+<!-- 示例（可删除）: -->
+Kaiming He: {count: 1, last_paper: "2111.06377", note: "MAE — 自监督视觉表示学习"}
+Saining Xie: {count: 1, last_paper: "2201.03545", note: "ConvNeXt — 现代卷积网络设计"}
 
 ## Arxiv Categories
 <!-- 用于 /daily-papers 抓取范围 -->
@@ -217,19 +239,11 @@ mkdir -p library/daily/
 - cs.AI
 - cs.LG
 
-## Keyword Weights
+## 兴趣权重
 
-<!-- 自动维护，反映实际阅读行为。格式: keyword: count -->
-<!-- 分析完成 +1，收藏到 papers/ 额外 +1 -->
-
-## Followed Authors
-<!-- 评分 ≥4 的论文作者自动加入。也可通过 /setup 配置初始关注作者 -->
-<!-- 格式: 作者名: {count, last_paper} -->
-
-<!-- 示例（可删除）: -->
-- **Kaiming He** — 代表作: [Masked Autoencoders Are Scalable Vision Learners](https://arxiv.org/abs/2111.06377) (2111.06377), MIT CSAIL
-- **Saining Xie** — 代表作: [A ConvNet for the 2020s](https://arxiv.org/abs/2201.03545) (2201.03545), NYU
-- **Jiajun Wu** — 代表作: [Learning to See the Physical World](https://arxiv.org/abs/1909.02235) (1909.02235), Stanford
+<!-- 自动维护，反映实际阅读行为 -->
+<!-- 分析完成时，从论文 tags 中提取主题词 +1；收藏额外 +1 -->
+<!-- 用于对描述匹配的候选论文做二次排序，不作为筛选条件 -->
 ```
 
 ---
@@ -299,7 +313,9 @@ SOFTWARE.
 
 仅需在目标目录中做以下调整：
 
-### 8.1 README.md — 替换个人数据示例
+### 8.1 README.md / README-zh.md — 替换个人数据示例
+
+对英文 `README.md` 和中文 `README-zh.md` 同步执行：
 
 将「数据存储结构」中的个人论文目录替换为示例论文：
 
@@ -344,7 +360,7 @@ daily recommendations, topic surveys, code analysis, and library management."
 - `library/interests.md`
 - `library/papers/1706-03762-transformer/meta.md`（如有示例）
 - `library/papers/1706-03762-transformer/analysis.md`（如有示例）
-- `README.md`、`CLAUDE.md`、`ROADMAP.md`
+- `README.md`、`README-zh.md`、`CLAUDE.md`、`ROADMAP.md`
 - `.gitignore`、`LICENSE`
 
 ### 10.2 验证网络连通性
@@ -376,6 +392,16 @@ Git 状态: 已初始化，首次提交完成
 
 ---
 
+## 发布前检查
+
+每次发布前，自动执行以下检查：
+
+1. **版本一致性**：读取 CLAUDE.md 的「当前版本」，确保 ROADMAP 中有对应版本段落
+2. **想法收集整理**：检查 ROADMAP「想法收集 → 待整理」中是否有已完成但未标记的条目，如有则先整理后再发布
+3. **changelog 完整性**：确保当天的 changelog 已记录本次发布包含的变更
+
+---
+
 ## 增量更新说明
 
 如果目标目录已存在且有 git 历史：
@@ -384,7 +410,7 @@ Git 状态: 已初始化，首次提交完成
 1. **不覆盖用户数据**：跳过 `library/interests.md`、`library/papers/`、`library/daily/` 等
 2. **更新 skills 和 commands**：覆盖 `.claude/commands/` 和 `.claude/skills/` 中的文件
 3. **更新 changelog**：覆盖 `.claude/changelog/` 中的文件
-4. **更新文档**：覆盖 README.md、CLAUDE.md、ROADMAP.md
+4. **更新文档**：覆盖 README.md、README-zh.md、CLAUDE.md、ROADMAP.md
 5. **保留 LICENSE 和 .gitignore**：不覆盖（用户可能已修改）
 6. **自动 commit + push**（用户确认后执行）：
    - 展示 `git diff --stat` 让用户 review 变更
