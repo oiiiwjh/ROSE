@@ -111,6 +111,21 @@ def fetch_by_search(query: str, max_results: int = 10, categories: List[str] = N
     return [parse_entry(e) for e in entries]
 
 
+def download_pdf(arxiv_id: str, output_path: str) -> str:
+    """Download PDF from arxiv to the specified path. Returns the saved file path."""
+    import os
+    pdf_url = f"https://arxiv.org/pdf/{arxiv_id}"
+    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
+    print(f"Downloading {pdf_url} ...", file=sys.stderr)
+    with _urlopen(pdf_url, timeout=60) as resp:
+        data = resp.read()
+    with open(output_path, "wb") as f:
+        f.write(data)
+    size_mb = len(data) / (1024 * 1024)
+    print(f"Saved to {output_path} ({size_mb:.1f} MB)", file=sys.stderr)
+    return output_path
+
+
 def main():
     parser = argparse.ArgumentParser(description="Fetch arxiv paper metadata")
     group = parser.add_mutually_exclusive_group(required=True)
@@ -119,6 +134,8 @@ def main():
     group.add_argument("--search", help="Search query")
     parser.add_argument("--max", type=int, default=10, help="Max results for search")
     parser.add_argument("--categories", help="Comma-separated arxiv categories filter")
+    parser.add_argument("--download", metavar="PATH",
+                        help="Download PDF to the specified path (requires --id or --url)")
     args = parser.parse_args()
 
     cats = args.categories.split(",") if args.categories else None
@@ -136,6 +153,14 @@ def main():
 
     json.dump(results, sys.stdout, ensure_ascii=False, indent=2)
     print()
+
+    # Download PDF if requested
+    if args.download:
+        aid = args.id or (extract_arxiv_id(args.url) if args.url else None)
+        if not aid:
+            print(json.dumps({"error": "--download requires --id or --url"}), file=sys.stderr)
+            sys.exit(1)
+        download_pdf(aid, args.download)
 
 
 if __name__ == "__main__":

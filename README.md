@@ -14,7 +14,7 @@
 # 1. 进入项目目录
 cd rose
 
-# 2. 首次使用，运行设置向导
+# 2. 首次使用，运行设置向导（交互式配置研究兴趣）
 /setup
 
 # 3. 开始使用
@@ -141,20 +141,15 @@ cd rose
 library/
 ├── interests.md                    # 研究兴趣配置（关键词、领域、arxiv 分类）
 ├── tmp/                            # 临时论文（分析后未收藏的）
-│   └── {arxiv_id}-{method_slug}/
-│       └── meta.md
+│   └── .gitkeep
 ├── papers/                         # 正式收藏的论文
 │   └── 1706-03762-transformer/     # 示例论文
 │       ├── meta.md                 # 元信息（frontmatter + 概要 + abstract + 翻译）
-│       ├── analysis.md             # 详细分析报告
-│       └── qa.md                   # Q&A 记录（如有）
+│       └── analysis.md             # 详细分析报告
 ├── topics/                         # 研究方向综述
-│   └── {topic-slug}/
-│       ├── overview.md
-│       └── paper_list.md
+│   └── .gitkeep
 └── daily/                          # 每日记录
-    ├── {YYYY-MM-DD}.md             # 论文推荐 + 知识产出
-    └── {YYYY-MM-DD}_raw.csv        # 原始论文列表数据
+    └── .gitkeep
 ```
 
 ### 论文目录命名规则
@@ -207,12 +202,9 @@ status: meta_only | analyzed | reviewed
 - cs.CV
 - cs.AI
 - （你关注的 arxiv 分类）
-
-## Followed Authors
-- **作者名** — 代表作: [论文标题](arxiv_url) (arxiv_id), 机构
 ```
 
-此配置影响 `/daily-papers` 的筛选排序和 `/survey-topic` 的搜索范围。推荐使用 `/setup` 进行交互式配置。
+此配置影响 `/daily-papers` 的筛选排序和 `/survey-topic` 的搜索范围。
 
 ## 系统架构
 
@@ -257,6 +249,30 @@ status: meta_only | analyzed | reviewed
 - **添加新 skill**：在 `.claude/skills/` 下建子目录 → 写 prompt 和脚本 → 在 `.claude/commands/` 加入口 → 更新 CLAUDE.md
 - **修改现有 skill**：直接编辑 `.claude/skills/{name}/*.md`，立即生效
 - **功能规划**：详见 [ROADMAP.md](./ROADMAP.md)
+
+## Contributing
+
+欢迎贡献新 skill、优化现有功能或修复 bug。
+
+**贡献流程**：
+
+1. Fork 本仓库并 clone 到本地
+2. 在你的本地副本中进行修改（新增/修改 skill、修复 bug 等）
+3. 运行 `/publish` 生成干净的发布版本，确认改动在 public 版本中表现正确
+4. 提交 PR，说明你的改动内容和动机
+
+**添加新 Skill**：
+
+1. 在 `.claude/skills/{name}/` 下创建 skill 目录，编写 prompt（`.md`）和脚本（如需要）
+2. 在 `.claude/commands/{name}.md` 添加 command 入口
+3. 更新 `CLAUDE.md` 的 Skills 表和 `README.md` 的功能说明
+4. Python 脚本仅使用标准库，不引入外部依赖
+
+**注意事项**：
+
+- 不要提交个人数据（`library/papers/`、`library/tmp/`、`library/daily/` 等）
+- 不要提交 `.claude/settings.local.json`（已在 `.gitignore` 中排除）
+- Skill prompt 使用中文，代码注释使用英文
 
 ## 相关文件
 

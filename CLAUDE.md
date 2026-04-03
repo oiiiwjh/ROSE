@@ -22,7 +22,7 @@
 | `/analyze-code` | 独立代码仓库分析 | `/analyze-code /path/to/repo --paper 2401-12345`（不关联论文时使用，关联论文用 read-paper --repo） |
 | `/daily-papers` | 每日论文推荐 | `/daily-papers` 或 `/daily-papers --date 2024-01-15` |
 | `/survey-topic` | 研究方向快速掌握 | `/survey-topic 3D Gaussian Splatting` |
-| `/manage-library` | 本地库管理 | `/manage-library --search diffusion` 或 `/manage-library --list recent` |
+| `/manage-library` | 本地库管理 | `/manage-library --search diffusion`、`--authors`、`--rate <id> <score>` |
 | `/session-digest` | 会话总结归档 | `/session-digest` 完整流程；`/session-digest --skip-optimize` 跳过优化建议 |
 | `/setup` | 首次使用引导 | `/setup` 交互式配置研究兴趣、关注作者 |
 | `/publish` | 发布公共版本 | `/publish` 或 `/publish ~/projects/rose-public/` |
@@ -46,6 +46,7 @@ arxiv_id: "2401.12345"
 url: "https://arxiv.org/abs/2401.12345"
 tags: [diffusion, image-generation]
 status: meta_only | analyzed | reviewed
+rating: 4  # 可选，1-5 评分
 repo: "https://github.com/author/repo"  # 可选，关联代码仓库
 supplements: ["twitter:https://...", "blog:https://..."]  # 可选，补充信息源
 ---
