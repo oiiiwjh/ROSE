@@ -36,6 +36,20 @@
 
 ---
 
+## v1.0.2 — 信息源与语义匹配 ✅
+
+在 v1.0.1 基础上的信息获取和匹配能力增强。
+
+- [x] `sources.md` 信息源记录（WebSearch 结果按类别自动归档）
+- [x] `interests.md` 从关键词匹配重构为语义描述 + 模糊匹配
+- [x] `survey-topic` 种子论文模式（`--papers` 参数，定向搜索，深度对比表）
+- [x] `/read-paper` Step 10 自动记录到每日日志
+- [x] `/update` 数据格式迁移机制（schema_version）
+- [x] 双语 README（EN + ZH）
+- [x] `/publish` 增量更新自动化（远程同步 + commit + push）
+
+---
+
 ## v1.5 — 体验打磨与智能推荐 🔜
 
 > 里程碑目标：完成后升级为 v1.1.0
@@ -75,6 +89,16 @@
 
 **涉及文件**：`daily-papers` skill
 
+#### 4. survey-topic 外部搜索优化（优先级：中）
+
+**目标**：降低 survey-topic 的 token 消耗，提升搜索覆盖率。
+
+**方案**：
+- 接入外部 AI 搜索平台（如 NotebookLM、Perplexity）做初步文献搜索
+- 先搜索获取候选列表，再对关键论文精读，避免大量 WebSearch 轮次
+
+**涉及文件**：`survey-topic` skill
+
 ---
 
 ## v2.0 — 能力扩展与外部集成 📋
@@ -98,11 +122,17 @@
 
 ### 外部数据集成
 
-#### Semantic Scholar API
-- 接入 `api.semanticscholar.org` 获取引用量、作者 h-index、最新论文
+#### 引用量与作者画像
+- 接入 Semantic Scholar API 或 [CitationClaw](https://github.com/VisionXLab/CitationClaw) 获取引用量、作者 h-index
 - `/daily-papers` 结合引用量信号做更好的排序
+- 作者推荐从单纯名字升级为兴趣 + 论文质量 + 引用量综合画像
 - 关注作者有新论文时主动通知
 - 基于"你关注的作者引用了谁"做二度推荐
+
+#### 社交媒体内容整理
+- 支持用户添加关注的 X/小红书博主，推送科研相关内容
+- 提取其中提到的论文、观点、讨论，与已有论文库交叉引用
+- 参考：[yuanbo-skills/no-more-fomo](https://github.com/freemty/yuanbo-skills/tree/main/no-more-fomo)、[follow-builders](https://github.com/zarazhangrui/follow-builders)
 
 #### 知识复习（艾宾浩斯遗忘曲线）
 - 记录每篇论文的阅读时间点和复习时间点
@@ -115,10 +145,16 @@
 - 支持选择性同步（仅收藏的、评分 ≥ N 的）
 - 作为导出渠道，与核心分析功能解耦
 
-#### Twitter/XHS 等 Media 内容整理
-- 爬取/订阅科研相关 Twitter 账号、小红书技术博主
-- 提取其中提到的论文、观点、讨论
-- 与已有论文库交叉引用
+### 输出与展示
+
+#### `/present` — 论文分享页面生成
+- 将论文分析结果整合为 HTML 网页，方便组会分享
+- 支持多种内容转换：单篇论文 / 多篇论文 / topics 综述 / 研究规划
+- 参考：[frontend-slides](https://github.com/zarazhangrui/frontend-slides)
+
+#### 图像生成辅助
+- 生成论文方法示意图、架构图等可视化内容
+- 参考：[awesome-nanobanana-pro](https://github.com/ZeroLu/awesome-nanobanana-pro)
 
 ### 结构演进
 
@@ -126,6 +162,10 @@
 - 新增 `.claude/skills/shared/` 目录放跨 skill 共用的工具
 - `arxiv_fetch.py` 被 read-paper 和 survey-topic 都引用，应迁入 shared/
 - 共用的模板片段、常量定义等
+
+#### Skill 分类与组织
+- 将 skills 按功能域分类（核心分析 / 数据管理 / 系统维护 / 输出展示）
+- 考虑子目录组织或 metadata 标注方案
 
 #### Plugins 化
 - 将 ROSE 的 skills 抽象为通用的 Claude Code plugin 形态
@@ -143,6 +183,8 @@
 - ~~[2026-04-02] 根据行为自动增强 interests 权重~~ [已整合 → v1.0.1]
 - ~~[2026-04-02] 维护作者/机构关注列表，推荐时加权~~ [已整合 → v1.0.1]
 - ~~[2026-04-02] 论文态度评分影响推荐~~ [已整合 → v1.0.1]
+- ~~[2026-04-03] WebSearch 多源结果记录：将搜索中获取的 arxiv/github/reddit/x 等信息分类存储到论文目录~~ [已整合 → v1.0.2]
+- ~~[2026-04-03] interests.md 从关键词匹配改为语义描述+模糊匹配~~ [已整合 → v1.0.2]
 
 ### 已规划
 
@@ -155,17 +197,14 @@
 - ~~[2026-04-03] daily-papers 结合 Semantic Scholar API 补充引用量排序~~ [已规划 → v2.0]
 - ~~[2026-04-03] survey-topic 与 library 已有论文自动关联~~ [已规划 → v2.0]
 - ~~[2026-04-03] shared/ 目录放跨 skill 共用工具（如 arxiv_fetch.py）~~ [已规划 → v2.0]
+- ~~[2026-04-03] survey-topic 后续接入外部 AI 搜索平台降低 token 消耗~~ [已规划 → v1.5]
+- ~~[2026-04-02] 作者推荐结合兴趣+论文质量+引用量（综合画像）~~ [已规划 → v2.0]
+- ~~[2026-04-03] 添加X/xhs等社交媒体信息源 + 用户自定义关注博主~~ [已规划 → v2.0]
+- ~~[2026-04-03] CitationClaw/Semantic Scholar 引用量集成~~ [已规划 → v2.0]
+- ~~[2026-04-03] 论文分析结果转HTML网页用于组会分享（/present skill）~~ [已规划 → v2.0]
+- ~~[2026-04-03] 图像生成辅助（方法示意图、架构图）~~ [已规划 → v2.0]
+- ~~[2026-04-03] skill 分类与组织（子目录或 metadata 方案）~~ [已规划 → v2.0]
 
 ### 待整理
 
-- [2026-04-03] survey-topic 后续接入外部 AI 搜索平台（如 NotebookLM）降低 token 消耗，先搜索再精读
-- [2026-04-02] 作者推荐不应只给名字，应结合兴趣+论文质量+引用量
-- [2026-04-03] 爬取或涉及到论文相关信息搜集，可以后续添加X/xhs等难直接爬取到平台
-- [2026-04-03] 支持用户添加自己喜欢的X博主等，可以参考 https://github.com/freemty/yuanbo-skills/tree/main/no-more-fomo 中推送关注消息的功能，以及https://github.com/zarazhangrui/follow-builders
-- [2026-04-03] https://github.com/VisionXLab/CitationClaw 计划添加引用量
-- ~~[2026-04-03] WebSearch 多源结果记录：将搜索中获取的 arxiv/github/reddit/x 等信息分类存储到论文目录~~ [已整合 → v1.0.2]
-- ~~[2026-04-03] interests.md 从关键词匹配改为语义描述+模糊匹配~~ [已整合 → v1.0.2]
-- skill计划：考虑将论文分析结果整合成html版本的网页，方便组会分享。（考虑多种内容进行转换，例如单篇论文/多篇论文/topics分析/研究规划/研究兴趣等）参考skill：https://github.com/zarazhangrui/frontend-slides
-- skill计划：考虑添加图像生成功能，参考https://github.com/ZeroLu/awesome-nanobanana-pro中的skill设计
-- skill计划：添加https://github.com/nextlevelbuilder/ui-ux-pro-max-skill 中的用户界面设计功能
-- skill分类规划，思考如何对skills进行分类？或者分子目录等
+（暂无）
