@@ -1,5 +1,5 @@
 # PDFs (可能过大)
-library/papers/*/source.pdf
+*.pdf
 
 # Python
 __pycache__/

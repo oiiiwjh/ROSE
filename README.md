@@ -156,14 +156,10 @@ Fetches latest skills, commands, and documentation from GitHub and safely update
 library/
 ├── interests.md                    # Research interest configuration (keywords, areas, arxiv categories)
 ├── tmp/                            # Temporary papers (analyzed but not yet collected)
-│   └── ...
 ├── papers/                         # Permanently collected papers
 │   └── 1706-03762-transformer/     # Example paper
 │       ├── meta.md                 # Metadata (frontmatter + summary + abstract + translation)
-│       ├── analysis.md             # Detailed analysis report
-│       ├── qa.md                   # Q&A records
-│       ├── sources.md              # Information sources (arxiv, GitHub, discussions)
-│       └── notes.md                # Personal notes
+│       └── analysis.md             # Detailed analysis report
 ├── topics/                         # Research topic surveys
 │   └── {topic-slug}/
 │       ├── overview.md
@@ -178,7 +174,7 @@ library/
 
 - `.` in arxiv ID replaced with `-`
 - method_slug is a short English identifier for the paper's core method/model
-- Examples: `1706-03762-transformer`, `2401-12345-nerf`
+- Examples: `2604-01030-diff3r`, `2602-08169-spherical-steering`
 
 ### meta.md Format
 
@@ -306,4 +302,13 @@ Contributions welcome — new skills, feature improvements, or bug fixes.
 | `library/interests.md` | Research interest configuration |
 
 ## References
-https://www.alphaxiv.org/skills/alphaxiv-paper-lookup/SKILL.md
+
+Projects and resources that inspired ROSE's design:
+
+- [AlphaXiv Paper Lookup Skill](https://www.alphaxiv.org/skills/alphaxiv-paper-lookup/SKILL.md) — Paper metadata and discussion fetching via AlphaXiv
+- [yuanbo-skills/no-more-fomo](https://github.com/freemty/yuanbo-skills/tree/main/no-more-fomo) — Inspiration for author/topic follow notifications
+- [follow-builders](https://github.com/zarazhangrui/follow-builders) — Inspiration for author/topic follow notifications
+- [CitationClaw](https://github.com/VisionXLab/CitationClaw) — Inspiration for citation count integration
+- [frontend-slides](https://github.com/zarazhangrui/frontend-slides) — Inspiration for HTML presentation generation
+- [awesome-nanobanana-pro](https://github.com/ZeroLu/awesome-nanobanana-pro) — Inspiration for image generation skill design
+- [ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) — Inspiration for UI/UX design skill

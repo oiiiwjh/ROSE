@@ -156,14 +156,10 @@ cd rose
 library/
 ├── interests.md                    # 研究兴趣配置（关键词、领域、arxiv 分类）
 ├── tmp/                            # 临时论文（分析后未收藏的）
-│   └── ...
 ├── papers/                         # 正式收藏的论文
 │   └── 1706-03762-transformer/     # 示例论文
 │       ├── meta.md                 # 元信息（frontmatter + 概要 + abstract + 翻译）
-│       ├── analysis.md             # 详细分析报告
-│       ├── qa.md                   # Q&A 记录
-│       ├── sources.md              # 信息源记录（arxiv、GitHub、讨论等）
-│       └── notes.md                # 个人笔记
+│       └── analysis.md             # 详细分析报告
 ├── topics/                         # 研究方向综述
 │   └── {topic-slug}/
 │       ├── overview.md
@@ -178,7 +174,7 @@ library/
 
 - arxiv ID 中的 `.` 替换为 `-`
 - method_slug 是论文核心方法/模型的简短英文标识
-- 示例：`1706-03762-transformer`、`2401-12345-nerf`
+- 示例：`2604-01030-diff3r`、`2602-08169-spherical-steering`
 
 ### meta.md 格式
 
@@ -306,4 +302,13 @@ rating: 4  # 可选，1-5 评分
 | `library/interests.md` | 研究兴趣配置 |
 
 ## 参考内容
-https://www.alphaxiv.org/skills/alphaxiv-paper-lookup/SKILL.md
+
+启发 ROSE 设计的项目和资源：
+
+- [AlphaXiv Paper Lookup Skill](https://www.alphaxiv.org/skills/alphaxiv-paper-lookup/SKILL.md) — 通过 AlphaXiv 获取论文元数据和讨论
+- [yuanbo-skills/no-more-fomo](https://github.com/freemty/yuanbo-skills/tree/main/no-more-fomo) — 作者/话题关注通知灵感
+- [follow-builders](https://github.com/zarazhangrui/follow-builders) — 作者/话题关注通知灵感
+- [CitationClaw](https://github.com/VisionXLab/CitationClaw) — 引用量集成灵感
+- [frontend-slides](https://github.com/zarazhangrui/frontend-slides) — HTML 分享页面生成灵感
+- [awesome-nanobanana-pro](https://github.com/ZeroLu/awesome-nanobanana-pro) — 图像生成 skill 设计灵感
+- [ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) — UI/UX 设计 skill 灵感
