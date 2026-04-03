@@ -1,0 +1,346 @@
+---
+description: "发布公共版本。从当前仓库提取干净的 public 版本到指定目录"
+---
+
+# ROSE 公共版本发布
+
+你是 ROSE 系统的发布助手。从当前私人仓库中提取干净的公共版本，跳过个人数据，生成通用模板和示例内容。
+
+**核心原则**：当前仓库（rose/）不做任何修改，所有操作在目标目录中进行。
+
+## 输入解析
+
+用户输入: $ARGUMENTS
+
+格式: `[target_path]`
+
+- `target_path`（可选）：输出目录路径，默认为当前仓库的同级目录 `../rose-public/`
+- 如果目标目录已存在且非空，询问用户是否覆盖
+
+---
+
+## Step 1: 确认发布配置
+
+使用 AskUserQuestion 确认：
+
+**问题**：确认发布配置？
+
+选项：
+- **使用默认配置** — 输出到 `{target_path}`，包含示例论文（Attention Is All You Need），MIT LICENSE
+- **自定义配置** — 调整输出路径、示例论文、LICENSE 类型等
+
+如果选择自定义，逐项询问：
+1. 输出路径
+2. 是否包含示例论文（默认 yes）
+3. LICENSE 类型（MIT / Apache 2.0 / 无）
+
+---
+
+## Step 2: 复制通用文件
+
+从当前仓库复制以下文件到目标目录（保持目录结构）：
+
+### 2.1 Skills 和 Commands（原样复制）
+
+```
+.claude/commands/*.md          — 所有 command 入口（含 publish 自身）
+.claude/skills/read-paper/     — skill + arxiv_fetch.py + templates
+.claude/skills/daily-papers/   — skill + arxiv_daily.py
+.claude/skills/survey-topic/   — skill
+.claude/skills/analyze-code/   — skill
+.claude/skills/manage-library/ — skill
+.claude/skills/session-digest/ — skill
+.claude/skills/setup/          — skill
+.claude/skills/publish/        — skill（本身）
+```
+
+**复制方式**：使用 `cp -r` 递归复制整个 skill 目录，确保包含所有子文件（.md、.py 等）。
+
+### 2.2 文档文件（复制后需微调）
+
+```
+README.md
+CLAUDE.md
+ROADMAP.md
+config.md
+```
+
+### 2.3 VSCode 配置（原样复制）
+
+```
+.vscode/settings.json
+```
+
+### 2.4 不复制的文件
+
+```
+.claude/settings.local.json    — 含个人硬编码路径
+.claude/changelog/*            — 个人会话日志
+brainstorm.md                  — 个人笔记
+add.md                         — 个人笔记
+temp_skills/                   — 参考收集
+library/papers/*               — 个人论文数据
+library/tmp/*                  — 个人临时数据
+library/daily/*                — 个人每日记录
+library/topics/*               — 个人方向综述
+library/interests.md           — 个人研究兴趣（替换为通用模板）
+```
+
+---
+
+## Step 3: 创建空目录结构
+
+在目标目录中创建：
+
+```bash
+mkdir -p library/papers/
+mkdir -p library/tmp/
+mkdir -p library/topics/
+mkdir -p library/daily/
+```
+
+每个空目录放一个 `.gitkeep` 文件以确保 git 跟踪。
+
+---
+
+## Step 4: 生成示例论文（Attention Is All You Need）
+
+如果用户选择包含示例论文：
+
+### 4.1 获取论文元信息
+
+运行 `python3 .claude/skills/read-paper/arxiv_fetch.py --id 1706.03762` 获取元信息。
+
+### 4.2 创建示例目录
+
+在目标目录的 `library/papers/1706-03762-transformer/` 下创建文件。
+
+### 4.3 生成 meta.md
+
+按标准 meta.md 格式生成，包含：
+- frontmatter（title, authors, date, arxiv_id, url, tags, status: analyzed）
+- 概要总结（中文）
+- Abstract（英文原文）
+- 摘要翻译（中文）
+
+### 4.4 生成 analysis.md
+
+获取论文详细信息（优先使用 AlphaXiv：`curl -s "https://alphaxiv.org/overview/1706.03762.md"`），按 `template-detailed.md` 的结构生成完整分析。
+
+这是公开发布的示例，分析质量要高，展示系统的分析能力。
+
+---
+
+## Step 5: 生成通用 interests.md
+
+在目标目录的 `library/interests.md` 创建通用模板：
+
+```markdown
+# Research Interests
+
+## Primary Areas
+<!-- 通过 /setup 配置，或手动编辑 -->
+<!-- 示例:
+- Computer Vision (CV)
+- Natural Language Processing (NLP)
+- Multimodal / Vision-Language
+-->
+
+## Keywords
+<!-- 用于 /daily-papers 筛选和 /survey-topic 搜索 -->
+<!-- 示例:
+- diffusion, image generation, text-to-image
+- large language model, reasoning, alignment
+-->
+
+## Arxiv Categories
+<!-- 用于 /daily-papers 抓取范围 -->
+- cs.CV
+- cs.CL
+- cs.AI
+- cs.LG
+
+## Followed Authors
+<!-- 添加关注的作者，格式：
+- **作者名** — 代表作: [论文标题](arxiv_url) (arxiv_id), 机构
+可通过 /setup 配置，或手动编辑此文件 -->
+
+<!-- 示例（可删除）: -->
+- **Kaiming He** — 代表作: [Masked Autoencoders Are Scalable Vision Learners](https://arxiv.org/abs/2111.06377) (2111.06377), MIT CSAIL
+- **Saining Xie** — 代表作: [A ConvNet for the 2020s](https://arxiv.org/abs/2201.03545) (2201.03545), NYU
+- **Jiajun Wu** — 代表作: [Learning to See the Physical World](https://arxiv.org/abs/1909.02235) (1909.02235), Stanford
+```
+
+---
+
+## Step 6: 生成 .gitignore
+
+在目标目录创建增强版 .gitignore：
+
+```
+# PDFs (可能过大)
+library/papers/*/source.pdf
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+
+# Config with secrets
+config.md
+
+# Personal settings
+.claude/settings.local.json
+
+# Temp files
+temp_skills/
+```
+
+---
+
+## Step 7: 生成 LICENSE
+
+根据用户选择的类型生成。默认 MIT：
+
+```
+MIT License
+
+Copyright (c) {current_year} {用户名或占位符}
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+使用 AskUserQuestion 询问 LICENSE 中的版权持有人名称。
+
+---
+
+## Step 8: 微调文档
+
+### 8.1 README.md 调整
+
+在目标目录的 README.md 中：
+
+1. **快速开始**：改为先运行 `/setup`：
+   ```bash
+   # 1. 进入项目目录
+   cd rose
+
+   # 2. 首次使用，运行设置向导
+   /setup
+
+   # 3. 开始使用
+   /daily-papers
+   /read-paper 2401.12345
+   ```
+
+2. **数据存储结构示例**：替换个人论文为 transformer 示例：
+   ```
+   ├── papers/
+   │   └── 1706-03762-transformer/       # 示例论文
+   │       ├── meta.md
+   │       └── analysis.md
+   ```
+
+3. **自定义研究兴趣**：添加 Followed Authors 段说明：
+   ```markdown
+   ## Followed Authors
+   - **作者名** — 代表作: [论文标题](arxiv_url) (arxiv_id), 机构
+   ```
+
+4. **命令表**：添加 `/setup` 和 `/publish`
+
+5. **系统架构**：添加 setup/ 和 publish/ skill 目录
+
+### 8.2 CLAUDE.md 调整
+
+1. **Skills 表**：添加 `/setup` 和 `/publish` 行
+2. **interests.md 格式说明**：添加 Followed Authors 段
+3. **系统架构**：添加 setup/ 和 publish/ 条目
+
+---
+
+## Step 9: 初始化 Git
+
+在目标目录中：
+
+```bash
+cd {target_path}
+git init
+git add -A
+git commit -m "Initial release: ROSE - Research Observation & Study Engine
+
+A Claude Code skill-based research exploration system for paper reading,
+daily recommendations, topic surveys, code analysis, and library management."
+```
+
+---
+
+## Step 10: 验证与完成
+
+### 10.1 验证文件完整性
+
+检查以下关键文件是否存在：
+- `.claude/commands/` 下所有 8 个 command 文件
+- `.claude/skills/` 下所有 8 个 skill 目录
+- `library/interests.md`
+- `library/papers/1706-03762-transformer/meta.md`（如有示例）
+- `library/papers/1706-03762-transformer/analysis.md`（如有示例）
+- `README.md`、`CLAUDE.md`、`ROADMAP.md`
+- `.gitignore`、`LICENSE`
+
+### 10.2 验证网络连通性
+
+运行 `python3 {target_path}/.claude/skills/read-paper/arxiv_fetch.py --search "test" --max 1` 测试。
+
+### 10.3 展示完成信息
+
+```
+ROSE 公共版本已生成！
+
+输出目录: {target_path}
+Git 状态: 已初始化，首次提交完成
+
+包含内容:
+  8 个 slash commands（read-paper, daily-papers, survey-topic, analyze-code,
+                       manage-library, session-digest, setup, publish）
+  示例论文: Attention Is All You Need (1706.03762)
+  通用 interests.md 模板（含 3 位示例作者）
+  MIT LICENSE
+
+接下来你可以：
+  cd {target_path}
+  git remote add origin <your-repo-url>
+  git push -u origin main
+
+原始仓库未做任何修改。
+```
+
+---
+
+## 增量更新说明
+
+如果目标目录已存在且有 git 历史：
+
+1. **不覆盖用户数据**：跳过 `library/interests.md`、`library/papers/`、`library/daily/` 等
+2. **更新 skills 和 commands**：覆盖 `.claude/commands/` 和 `.claude/skills/` 中的文件
+3. **更新文档**：覆盖 README.md、CLAUDE.md、ROADMAP.md
+4. **保留 LICENSE 和 .gitignore**：不覆盖（用户可能已修改）
+5. 增量更新后，提示用户 review changes 并手动 commit

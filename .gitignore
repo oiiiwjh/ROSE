@@ -1,0 +1,18 @@
+# PDFs (可能过大)
+library/papers/*/source.pdf
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+
+# Config with secrets
+config.md
+
+# Personal settings
+.claude/settings.local.json
+
+# Temp files
+temp_skills/
