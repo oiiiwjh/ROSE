@@ -47,33 +47,34 @@
 
 **涉及文件**：`arxiv_fetch.py`、`read-paper` skill
 
-#### 3. 行为增强 interests（优先级：高）
+#### 3. 行为增强 interests（优先级：高）✅
 
 **目标**：分析/深读论文后自动更新 `interests.md` 中关键词的权重。
 
 **方案**：
-- 在 `/session-digest` 中统计本次会话分析的论文标签
+- `/read-paper` 分析完成时实时更新关键词权重（+1），收藏时额外 +1
+- `/session-digest` 做校验和补漏
 - 在 `interests.md` 新增 `## Keyword Weights` 段，格式如 `diffusion: 12`（累计计数）
 - `/daily-papers` 筛选时读取权重进行加权排序
-- 收藏到 papers/ 的论文贡献更高权重（+2），仅分析未收藏的贡献较低（+1）
 
-**涉及文件**：`interests.md`、`session-digest` skill、`daily-papers` skill
+**涉及文件**：`interests.md`、`read-paper` skill、`session-digest` skill、`daily-papers` skill
 
 ### 智能推荐与反馈闭环
 
-#### 4. 论文态度评分 + 作者/机构关注（优先级：高）
+#### 4. 论文态度评分 + 作者/机构关注（优先级：高）✅
 
 **目标**：看完论文后给评分，同时更新作者/机构关注度。
 
 **方案**：
-- 在 `/read-paper` 的收藏确认步骤中，增加 1-5 评分（AskUserQuestion）
+- 在 `/read-paper` 的输出摘要和收藏确认步骤中，增加 1-5 评分（AskUserQuestion）
 - 评分写入 `meta.md` frontmatter（`rating: 4`）
 - 在 `/manage-library` 中新增操作：
-  - `--authors` — 查看关注的作者/机构列表及统计
+  - `--authors` — 查看关注的作者列表及统计
   - `--rate <paper_id> <score>` — 补充/修改论文评分
-- 评分 ≥4 的论文作者自动加入关注列表（频次累计）
+- 评分 ≥4 的论文作者自动加入 `interests.md` 的 `## Followed Authors`
+- `/daily-papers` 排序时对关注作者论文加权，并标注 `[关注作者]`
 
-**涉及文件**：`read-paper` skill、`manage-library` skill、`interests.md`
+**涉及文件**：`read-paper` skill、`manage-library` skill、`daily-papers` skill、`interests.md`
 
 #### 5. Explore-Exploit 平衡（优先级：中）
 

@@ -148,6 +148,11 @@ ROSE 是基于 Claude Code 的科研探索系统，帮助你：
 - {分类2}
 - ...
 
+## Keyword Weights
+
+<!-- 自动维护，反映实际阅读行为。格式: keyword: count -->
+<!-- 分析完成 +1，收藏到 papers/ 额外 +1 -->
+
 ## Followed Authors
 - **{作者名}** — 代表作: [{论文标题}]({arxiv_url}) ({arxiv_id}), {机构}
 - ...
@@ -155,6 +160,11 @@ ROSE 是基于 Claude Code 的科研探索系统，帮助你：
 
 如果用户跳过了作者步骤，Followed Authors 段保留空模板：
 ```markdown
+## Keyword Weights
+
+<!-- 自动维护，反映实际阅读行为。格式: keyword: count -->
+<!-- 分析完成 +1，收藏到 papers/ 额外 +1 -->
+
 ## Followed Authors
 <!-- 添加关注的作者，格式：
 - **作者名** — 代表作: [论文标题](arxiv_url) (arxiv_id), 机构

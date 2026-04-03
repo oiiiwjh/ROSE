@@ -105,6 +105,8 @@ cd rose
 /manage-library --tmp                # 查看临时论文
 /manage-library --promote 2401-12345 # 临时论文转正
 /manage-library --clean              # 检查不完整条目
+/manage-library --authors            # 查看关注的作者列表
+/manage-library --rate 2401-12345 5  # 为论文评分（1-5）
 ```
 
 ### `/session-digest` — 会话总结归档
@@ -134,6 +136,17 @@ cd rose
 /publish                          # 默认输出到 ../rose-public/
 /publish ~/projects/rose-public/  # 指定输出路径
 ```
+
+### `/update` — 检查并更新系统文件
+
+从 GitHub 获取最新的 skills、commands 和文档，安全更新到本地。只更新系统文件，绝不触碰用户数据（`library/`）。
+
+```bash
+/update                  # 完整流程（检查 → 展示变更 → 确认 → 更新）
+/update --check          # 仅检查是否有更新
+```
+
+**自动检查**：每次新对话开始时，ROSE 会自动检查 GitHub 是否有更新并提示。
 
 ## 数据存储结构
 
@@ -173,6 +186,7 @@ arxiv_id: "2604.01030"
 url: "https://arxiv.org/abs/2604.01030"
 tags: [3dgs, feed-forward, differentiable-optimization]
 status: meta_only | analyzed | reviewed
+rating: 4  # 可选，1-5 评分
 ---
 
 ## 概要总结
@@ -218,7 +232,8 @@ status: meta_only | analyzed | reviewed
 │   ├── manage-library.md
 │   ├── session-digest.md
 │   ├── setup.md
-│   └── publish.md
+│   ├── publish.md
+│   └── update.md
 ├── skills/             # Skill 实现（prompt + 脚本）
 │   ├── read-paper/
 │   │   ├── read-paper.md       # skill prompt
@@ -233,7 +248,8 @@ status: meta_only | analyzed | reviewed
 │   ├── manage-library/
 │   ├── session-digest/
 │   ├── setup/
-│   └── publish/
+│   ├── publish/
+│   └── update/         # 自动更新检查 + check_update.sh
 └── changelog/          # 系统变更日志
 ```
 

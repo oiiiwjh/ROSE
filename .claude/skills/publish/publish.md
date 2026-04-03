@@ -56,7 +56,6 @@ GitHub 仓库地址：`https://github.com/oiiiwjh/ROSE`
   .claude/skills/setup/
   .claude/skills/publish/
   .claude/changelog/*
-  .vscode/settings.json
   README.md, CLAUDE.md, ROADMAP.md, config.md
 
 将跳过的文件:
@@ -105,18 +104,13 @@ GitHub 仓库地址：`https://github.com/oiiiwjh/ROSE`
 ### 2.1 Skills 和 Commands（原样复制）
 
 ```
-.claude/commands/*.md          — 所有 command 入口（含 publish 自身）
-.claude/skills/read-paper/     — skill + arxiv_fetch.py + templates
-.claude/skills/daily-papers/   — skill + arxiv_daily.py
-.claude/skills/survey-topic/   — skill
-.claude/skills/analyze-code/   — skill
-.claude/skills/manage-library/ — skill
-.claude/skills/session-digest/ — skill
-.claude/skills/setup/          — skill
-.claude/skills/publish/        — skill（本身）
+.claude/commands/*.md          — 所有 command 入口
+.claude/skills/*/              — 所有 skill 目录（自动扫描，无需硬编码列表）
 ```
 
-**复制方式**：使用 `cp -r` 递归复制整个 skill 目录，确保包含所有子文件（.md、.py 等）。
+**复制方式**：
+- Commands: `cp .claude/commands/*.md {target}/.claude/commands/`
+- Skills: 遍历 `.claude/skills/` 下所有子目录，使用 `cp -r` 递归复制每个 skill 目录，确保包含所有子文件（.md、.py 等）。不硬编码 skill 名称，新增 skill 自动包含。
 
 ### 2.2 文档文件（复制后需微调）
 
@@ -129,20 +123,16 @@ config.md
 
 ### 2.3 Changelog（原样复制）
 
+
 ```
 .claude/changelog/*            — 系统功能变更日志
 ```
 
-### 2.4 VSCode 配置（原样复制）
-
-```
-.vscode/settings.json
-```
-
-### 2.5 不复制的文件
+### 2.4 不复制的文件
 
 ```
 .claude/settings.local.json    — 含个人硬编码路径
+.vscode/                       — 编辑器配置（用户自定义）
 brainstorm.md                  — 个人笔记
 add.md                         — 个人笔记
 temp_skills/                   — 参考收集
@@ -227,10 +217,14 @@ mkdir -p library/daily/
 - cs.AI
 - cs.LG
 
+## Keyword Weights
+
+<!-- 自动维护，反映实际阅读行为。格式: keyword: count -->
+<!-- 分析完成 +1，收藏到 papers/ 额外 +1 -->
+
 ## Followed Authors
-<!-- 添加关注的作者，格式：
-- **作者名** — 代表作: [论文标题](arxiv_url) (arxiv_id), 机构
-可通过 /setup 配置，或手动编辑此文件 -->
+<!-- 评分 ≥4 的论文作者自动加入。也可通过 /setup 配置初始关注作者 -->
+<!-- 格式: 作者名: {count, last_paper} -->
 
 <!-- 示例（可删除）: -->
 - **Kaiming He** — 代表作: [Masked Autoencoders Are Scalable Vision Learners](https://arxiv.org/abs/2111.06377) (2111.06377), MIT CSAIL
@@ -345,8 +339,8 @@ daily recommendations, topic surveys, code analysis, and library management."
 ### 10.1 验证文件完整性
 
 检查以下关键文件是否存在：
-- `.claude/commands/` 下所有 8 个 command 文件
-- `.claude/skills/` 下所有 8 个 skill 目录
+- `.claude/commands/` 下的 command 文件数量与源仓库一致
+- `.claude/skills/` 下的 skill 目录数量与源仓库一致
 - `library/interests.md`
 - `library/papers/1706-03762-transformer/meta.md`（如有示例）
 - `library/papers/1706-03762-transformer/analysis.md`（如有示例）
@@ -392,4 +386,8 @@ Git 状态: 已初始化，首次提交完成
 3. **更新 changelog**：覆盖 `.claude/changelog/` 中的文件
 4. **更新文档**：覆盖 README.md、CLAUDE.md、ROADMAP.md
 5. **保留 LICENSE 和 .gitignore**：不覆盖（用户可能已修改）
-6. 增量更新后，提示用户 review changes 并手动 commit
+6. **自动 commit + push**（用户确认后执行）：
+   - 展示 `git diff --stat` 让用户 review 变更
+   - 使用 AskUserQuestion 询问是否自动 commit 并 push
+   - 如果确认：`git add -A && git commit -m "sync: update skills, docs and changelog" && git push origin main`
+   - 如果拒绝：仅提示用户手动操作

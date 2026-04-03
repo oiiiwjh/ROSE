@@ -1,5 +1,5 @@
 ---
-description: "本地论文库管理。搜索、浏览、统计、打标签"
+description: "本地论文库管理。搜索、浏览、统计、打标签、评分、作者关注"
 ---
 
 # 论文库管理
@@ -21,6 +21,8 @@ description: "本地论文库管理。搜索、浏览、统计、打标签"
 - `--tmp`: 列出 tmp 中的临时论文
 - `--promote <paper_id>`: 将 tmp 中的论文转正到 papers/
 - `--clear-tmp`: 清空 tmp 中的所有临时论文
+- `--authors`: 查看关注的作者列表及统计
+- `--rate <paper_id> <score>`: 为论文评分（1-5）或修改评分
 
 ## 每次调用前置：tmp 论文整理
 
@@ -105,6 +107,27 @@ description: "本地论文库管理。搜索、浏览、统计、打标签"
 2. 读取该目录下的 `meta.md`
 3. 在 frontmatter 的 tags 字段中添加新标签（不重复）
 4. 保存更新后的 meta.md
+
+### --authors
+
+1. 读取 `library/interests.md` 的 `## Followed Authors` 段，解析关注作者列表
+2. 对每个关注作者，在 `library/papers/` 中搜索其出现的所有论文（匹配 meta.md 的 authors 字段）
+3. 展示关注作者列表：
+
+```
+👤 关注作者列表
+1. {作者名} — 高分论文 {count} 篇，最近: {last_paper 标题}
+   在库论文: {该作者在 papers/ 中的所有论文标题列表}
+...
+```
+
+### --rate <paper_id> <score>
+
+1. 根据 paper_id 前缀在 `library/papers/` 和 `library/tmp/` 下匹配论文目录
+2. 读取 meta.md，更新或添加 `rating: <score>` 字段（score 为 1-5 整数）
+3. 如果新评分 ≥4 且之前评分 <4（或无评分）：将该论文的所有作者加入 `library/interests.md` 的 `## Followed Authors`（更新 count 和 last_paper）
+4. 如果新评分 <4 且之前 ≥4：不移除作者（只加不减）
+5. 展示更新结果
 
 ### --clean
 

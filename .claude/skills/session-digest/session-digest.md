@@ -114,6 +114,15 @@ description: "会话总结与归档。整理本次对话的知识产出和系统
 - **影响文件**: {相关文件列表}
 ```
 
+### 2.3 关键词权重校验与补充
+
+统计本次会话中所有分析过的论文（检查 `library/papers/` 和 `library/tmp/` 下本次新增或修改的 `meta.md`），对比 `library/interests.md` 中的 `## Keyword Weights`：
+
+1. 提取这些论文的 `tags` 字段
+2. 检查每个 tag 是否已在 Keyword Weights 中正确计数（read-paper 应已实时更新，此处做补漏）
+3. 如有遗漏（如 read-paper 流程中未正常更新的情况），补充更新
+4. 在 changelog 中记录补充情况
+
 ---
 
 ## Phase 3: Skill 优化建议（可选）
