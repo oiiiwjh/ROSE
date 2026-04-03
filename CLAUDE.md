@@ -9,7 +9,7 @@
 - `library/` — 所有研究数据存储
   - `library/interests.md` — 用户研究兴趣配置（影响推荐过滤）
   - `library/tmp/{arxiv_id}-{method_slug}/` — 临时论文（所有论文先进 tmp，确认收藏后转正）
-  - `library/papers/{arxiv_id}-{method_slug}/` — 正式收藏的论文（meta.md, analysis.md, qa.md, notes.md）
+  - `library/papers/{arxiv_id}-{method_slug}/` — 正式收藏的论文（meta.md, analysis.md, qa.md, sources.md, notes.md）
   - `library/topics/{slug}/` — 按研究方向存储（overview.md, paper_list.md）
   - `library/daily/{YYYY-MM-DD}.md` — 每日知识记录（论文推荐 + 会话知识产出）
 - `.claude/changelog/{YYYY-MM-DD}.md` — 系统功能变更日志（skill 变更、debug 修复等）

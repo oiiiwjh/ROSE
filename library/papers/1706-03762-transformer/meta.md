@@ -6,6 +6,7 @@ arxiv_id: "1706.03762"
 url: "https://arxiv.org/abs/1706.03762"
 tags: [transformer, attention, sequence-to-sequence, machine-translation]
 status: analyzed
+rating: 5
 ---
 
 ## 概要总结

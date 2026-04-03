@@ -162,3 +162,6 @@
 - [2026-04-03] daily-papers 结合 Semantic Scholar API 补充引用量排序
 - [2026-04-03] survey-topic 与 library 已有论文自动关联
 - [2026-04-03] shared/ 目录放跨 skill 共用工具（如 arxiv_fetch.py）
+- [2026-04-03] 爬取或涉及到论文相关信息搜集，可以后续添加X/xhs等难直接爬取到平台。
+- [2026-04-03] 支持用户添加自己喜欢的X博主等，可以参考https://github.com/freemty/yuanbo-skills/tree/main/no-more-fomo中推送关注消息的功能。
+- https://github.com/VisionXLab/CitationClaw计划添加引用量
