@@ -1,4 +1,4 @@
-# ROSE - Research Observation & Study Engine
+# ROSE — Research Operating System for Erudition
 
 基于 [Claude Code](https://claude.ai/claude-code) Skills 的个人科研探索系统。通过 slash commands 在终端中完成论文阅读分析、每日推荐、方向调研、论文库管理等工作流，所有产出结构化存储在本地。
 
