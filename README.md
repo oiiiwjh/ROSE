@@ -76,12 +76,21 @@ Fetches latest papers from arxiv and intelligently filters recommendations based
 
 ### `/survey-topic` — Quick Research Topic Survey
 
-Given a research topic, generates a structured survey through multi-round searching.
+Given a research topic or seed papers, generates a structured survey through multi-round searching. Supports two modes: topic-based (general search) and seed-based (directed search from existing papers).
 
 ```bash
+# Topic mode — search from scratch
 /survey-topic 3D Gaussian Splatting
 /survey-topic Hallucination in Vision-Language Models
+
+# Seed mode — build survey from analyzed papers
+/survey-topic --papers 2409.02095 2409.02048 2503.05638
+
+# Mixed mode — seed papers with explicit topic
+/survey-topic Explicit 3D as Video Intermediate Representation --papers 2409.02095 2409.02048 2503.05638
 ```
+
+**Seed mode** leverages existing paper analyses (meta.md, analysis.md) to perform directed searches: citation tracking, author tracking, method extension, baseline sourcing, and latest progress. The output includes a seed paper comparison table and technical evolution analysis.
 
 **Output**: `library/topics/{slug}/overview.md` (survey) + `paper_list.md` (paper list) + meta stubs for key papers
 
@@ -156,10 +165,14 @@ Fetches latest skills, commands, and documentation from GitHub and safely update
 library/
 ├── interests.md                    # Research interest configuration (keywords, areas, arxiv categories)
 ├── tmp/                            # Temporary papers (analyzed but not yet collected)
+│   └── {arxiv_id}-{method_slug}/
+│       └── meta.md
 ├── papers/                         # Permanently collected papers
 │   └── 1706-03762-transformer/     # Example paper
 │       ├── meta.md                 # Metadata (frontmatter + summary + abstract + translation)
-│       └── analysis.md             # Detailed analysis report
+│       ├── analysis.md             # Detailed analysis report
+│       ├── qa.md                   # Q&A records (optional)
+│       └── sources.md              # Information sources (optional)
 ├── topics/                         # Research topic surveys
 │   └── {topic-slug}/
 │       ├── overview.md
@@ -174,7 +187,7 @@ library/
 
 - `.` in arxiv ID replaced with `-`
 - method_slug is a short English identifier for the paper's core method/model
-- Examples: `2604-01030-diff3r`, `2602-08169-spherical-steering`
+- Examples: `1706-03762-transformer`, `2401-12345-nerf`
 
 ### meta.md Format
 
@@ -302,13 +315,4 @@ Contributions welcome — new skills, feature improvements, or bug fixes.
 | `library/interests.md` | Research interest configuration |
 
 ## References
-
-Projects and resources that inspired ROSE's design:
-
-- [AlphaXiv Paper Lookup Skill](https://www.alphaxiv.org/skills/alphaxiv-paper-lookup/SKILL.md) — Paper metadata and discussion fetching via AlphaXiv
-- [yuanbo-skills/no-more-fomo](https://github.com/freemty/yuanbo-skills/tree/main/no-more-fomo) — Inspiration for author/topic follow notifications
-- [follow-builders](https://github.com/zarazhangrui/follow-builders) — Inspiration for author/topic follow notifications
-- [CitationClaw](https://github.com/VisionXLab/CitationClaw) — Inspiration for citation count integration
-- [frontend-slides](https://github.com/zarazhangrui/frontend-slides) — Inspiration for HTML presentation generation
-- [awesome-nanobanana-pro](https://github.com/ZeroLu/awesome-nanobanana-pro) — Inspiration for image generation skill design
-- [ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) — Inspiration for UI/UX design skill
+https://www.alphaxiv.org/skills/alphaxiv-paper-lookup/SKILL.md

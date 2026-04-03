@@ -158,6 +158,7 @@
 
 ### 待整理
 
+- [2026-04-03] survey-topic 后续接入外部 AI 搜索平台（如 NotebookLM）降低 token 消耗，先搜索再精读
 - [2026-04-02] 作者推荐不应只给名字，应结合兴趣+论文质量+引用量
 - [2026-04-03] 爬取或涉及到论文相关信息搜集，可以后续添加X/xhs等难直接爬取到平台
 - [2026-04-03] 支持用户添加自己喜欢的X博主等，可以参考 https://github.com/freemty/yuanbo-skills/tree/main/no-more-fomo 中推送关注消息的功能，以及https://github.com/zarazhangrui/follow-builders

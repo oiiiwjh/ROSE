@@ -76,12 +76,21 @@ cd rose
 
 ### `/survey-topic` — 研究方向快速掌握
 
-给定一个研究方向，通过多轮搜索生成结构化综述。
+给定研究方向或种子论文，通过多轮搜索生成结构化综述。支持两种模式：主题模式（通用搜索）和种子模式（基于已有论文定向搜索）。
 
 ```bash
+# 主题模式 — 从零搜索
 /survey-topic 3D Gaussian Splatting
 /survey-topic 视觉语言模型中的幻觉问题
+
+# 种子模式 — 基于已分析论文展开调研
+/survey-topic --papers 2409.02095 2409.02048 2503.05638
+
+# 混合模式 — 种子论文 + 指定主题
+/survey-topic 显式三维信息作为视频中间表示 --papers 2409.02095 2409.02048 2503.05638
 ```
+
+**种子模式**利用已有论文分析（meta.md、analysis.md）进行定向搜索：引用追踪、作者追踪、方法延伸、Baseline 溯源、最新进展。产出额外包含种子论文对比表和技术演进分析。
 
 **产出**：`library/topics/{slug}/overview.md`（综述）+ `paper_list.md`（论文列表）+ 核心论文的 meta stubs
 
@@ -156,10 +165,14 @@ cd rose
 library/
 ├── interests.md                    # 研究兴趣配置（关键词、领域、arxiv 分类）
 ├── tmp/                            # 临时论文（分析后未收藏的）
+│   └── {arxiv_id}-{method_slug}/
+│       └── meta.md
 ├── papers/                         # 正式收藏的论文
 │   └── 1706-03762-transformer/     # 示例论文
 │       ├── meta.md                 # 元信息（frontmatter + 概要 + abstract + 翻译）
-│       └── analysis.md             # 详细分析报告
+│       ├── analysis.md             # 详细分析报告
+│       ├── qa.md                   # Q&A 记录（可选）
+│       └── sources.md              # 信息源记录（可选）
 ├── topics/                         # 研究方向综述
 │   └── {topic-slug}/
 │       ├── overview.md
@@ -174,7 +187,7 @@ library/
 
 - arxiv ID 中的 `.` 替换为 `-`
 - method_slug 是论文核心方法/模型的简短英文标识
-- 示例：`2604-01030-diff3r`、`2602-08169-spherical-steering`
+- 示例：`1706-03762-transformer`、`2401-12345-nerf`
 
 ### meta.md 格式
 
@@ -302,13 +315,4 @@ rating: 4  # 可选，1-5 评分
 | `library/interests.md` | 研究兴趣配置 |
 
 ## 参考内容
-
-启发 ROSE 设计的项目和资源：
-
-- [AlphaXiv Paper Lookup Skill](https://www.alphaxiv.org/skills/alphaxiv-paper-lookup/SKILL.md) — 通过 AlphaXiv 获取论文元数据和讨论
-- [yuanbo-skills/no-more-fomo](https://github.com/freemty/yuanbo-skills/tree/main/no-more-fomo) — 作者/话题关注通知灵感
-- [follow-builders](https://github.com/zarazhangrui/follow-builders) — 作者/话题关注通知灵感
-- [CitationClaw](https://github.com/VisionXLab/CitationClaw) — 引用量集成灵感
-- [frontend-slides](https://github.com/zarazhangrui/frontend-slides) — HTML 分享页面生成灵感
-- [awesome-nanobanana-pro](https://github.com/ZeroLu/awesome-nanobanana-pro) — 图像生成 skill 设计灵感
-- [ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) — UI/UX 设计 skill 灵感
+https://www.alphaxiv.org/skills/alphaxiv-paper-lookup/SKILL.md
