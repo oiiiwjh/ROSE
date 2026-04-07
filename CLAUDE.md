@@ -1,6 +1,6 @@
 # ROSE — Research Operating System for Erudition
 
-> 当前版本: v1.0.2 | [变更日志](.claude/changelog/)
+> 当前版本: v1.0.3 | [变更日志](.claude/changelog/)
 
 基于 Claude Code Skills 的科研探索系统。通过 slash commands 实现论文阅读分析、每日推荐、方向调研等功能。
 
@@ -9,6 +9,7 @@
 - `.claude/commands/` — Slash command 入口（薄包装，引用 skills/）
 - `.claude/skills/{name}/` — 每个 Skill 独立目录（prompt + 脚本 + 扩展文件）
 - `library/` — 所有研究数据存储
+  - `library/README.md` — 自动生成的论文索引（由 `generate_index.py` 维护，勿手动编辑）
   - `library/interests.md` — 用户研究兴趣配置（影响推荐过滤）
   - `library/tmp/{arxiv_id}-{method_slug}/` — 临时论文（所有论文先进 tmp，确认收藏后转正）
   - `library/papers/{arxiv_id}-{method_slug}/` — 正式收藏的论文（meta.md, analysis.md, qa.md, sources.md, notes.md）
@@ -52,6 +53,8 @@ status: meta_only | analyzed | reviewed
 rating: 4  # 可选，1-5 评分
 repo: "https://github.com/author/repo"  # 可选，关联代码仓库
 supplements: ["twitter:https://...", "blog:https://..."]  # 可选，补充信息源
+source: daily-papers  # 来源 skill（daily-papers / read-paper / survey-topic）
+collected_date: "2026-04-07"  # 收集到 library 的日期
 ---
 
 ## 概要总结

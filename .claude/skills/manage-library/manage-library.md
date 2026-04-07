@@ -54,6 +54,14 @@ description: "本地论文库管理。搜索、浏览、统计、打标签、评
 
 如果 `library/tmp/` 为空，跳过此步骤，直接进入下方操作。
 
+### 5. 更新 Library 索引
+
+上述整理操作完成后（或跳过时也执行），运行索引生成脚本刷新 `library/README.md`：
+
+```bash
+python3 .claude/skills/manage-library/generate_index.py
+```
+
 ---
 
 ## 执行步骤
@@ -128,6 +136,10 @@ description: "本地论文库管理。搜索、浏览、统计、打标签、评
 3. 如果新评分 ≥4 且之前评分 <4（或无评分）：将该论文的所有作者加入 `library/interests.md` 的 `## Followed Authors`（更新 count 和 last_paper）
 4. 如果新评分 <4 且之前 ≥4：不移除作者（只加不减）
 5. 展示更新结果
+
+### 操作后更新索引
+
+`--tag`、`--rate`、`--promote`、`--clean` 等修改操作完成后，运行 `python3 .claude/skills/manage-library/generate_index.py` 刷新 `library/README.md`。
 
 ### --clean
 

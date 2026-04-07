@@ -165,20 +165,21 @@ Fetches latest skills, commands, and documentation from GitHub and safely update
 library/
 ├── interests.md                    # Research interest configuration (keywords, areas, arxiv categories)
 ├── tmp/                            # Temporary papers (analyzed but not yet collected)
-│   └── {arxiv_id}-{method_slug}/
+│   └── 2604-01030-diff3r/
 │       └── meta.md
 ├── papers/                         # Permanently collected papers
-│   └── 1706-03762-transformer/     # Example paper
+│   └── 1706-03762-transformer/       # Example paper
 │       ├── meta.md                 # Metadata (frontmatter + summary + abstract + translation)
 │       ├── analysis.md             # Detailed analysis report
-│       ├── qa.md                   # Q&A records (optional)
-│       └── sources.md              # Information sources (optional)
+│       ├── qa.md                   # Q&A records
+│       └── code_analysis.md        # Code analysis (if applicable)
 ├── topics/                         # Research topic surveys
-│   └── {topic-slug}/
+│   └── 3d-gaussian-splatting/
 │       ├── overview.md
 │       └── paper_list.md
 └── daily/                          # Daily records
-    └── {YYYY-MM-DD}.md             # Paper recommendations + knowledge outputs
+    ├── 2026-04-02.md               # Paper recommendations + knowledge outputs
+    └── 2026-04-02_raw.csv          # Raw paper listing data
 ```
 
 ### Paper Directory Naming Convention
@@ -187,7 +188,7 @@ library/
 
 - `.` in arxiv ID replaced with `-`
 - method_slug is a short English identifier for the paper's core method/model
-- Examples: `1706-03762-transformer`, `2401-12345-nerf`
+- Examples: `2604-01030-diff3r`, `2602-08169-spherical-steering`
 
 ### meta.md Format
 
