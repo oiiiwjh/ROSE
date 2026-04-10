@@ -76,7 +76,7 @@ Fetches latest papers from arxiv and intelligently filters recommendations based
 
 ### `/survey-topic` — Quick Research Topic Survey
 
-Given a research topic or seed papers, generates a structured survey through multi-round searching. Supports two modes: topic-based (general search) and seed-based (directed search from existing papers).
+Given a research topic, seed papers, or a research idea document, generates structured analysis through multi-round searching. Supports three modes: topic-based (general search), seed-based (directed search from existing papers), and idea validation (novelty & feasibility analysis).
 
 ```bash
 # Topic mode — search from scratch
@@ -88,11 +88,19 @@ Given a research topic or seed papers, generates a structured survey through mul
 
 # Mixed mode — seed papers with explicit topic
 /survey-topic Explicit 3D as Video Intermediate Representation --papers 2409.02095 2409.02048 2503.05638
+
+# Idea validation mode — validate a research idea
+/survey-topic --idea path/to/my-idea.md
+/survey-topic --idea "Use depth-aware attention for video inpainting"
 ```
 
 **Seed mode** leverages existing paper analyses (meta.md, analysis.md) to perform directed searches: citation tracking, author tracking, method extension, baseline sourcing, and latest progress. The output includes a seed paper comparison table and technical evolution analysis.
 
-**Output**: `library/topics/{slug}/overview.md` (survey) + `paper_list.md` (paper list) + meta stubs for key papers
+**Idea mode** takes a research idea document (structured or free-form) and conducts adversarial investigation: searches for directly conflicting work, method precedents, alternative solutions, combination overlaps, and concurrent work. Produces a feasibility report (novelty assessment per claim), competitive analysis (per-paper comparison), and a research plan (experiments, baselines, timeline, submission targets).
+
+**Output**:
+- Topic/Seed mode: `library/topics/{slug}/overview.md` (survey) + `paper_list.md` (paper list) + meta stubs for key papers
+- Idea mode: all of the above, plus `idea_source.md` (archived idea) + `feasibility.md` + `competitive_analysis.md` + `research_plan.md`
 
 ### `/analyze-code` — Code Repository Analysis
 
@@ -165,18 +173,21 @@ Fetches latest skills, commands, and documentation from GitHub and safely update
 library/
 ├── interests.md                    # Research interest configuration (keywords, areas, arxiv categories)
 ├── tmp/                            # Temporary papers (analyzed but not yet collected)
-│   └── 2604-01030-diff3r/
-│       └── meta.md
+│   └── ...
 ├── papers/                         # Permanently collected papers
-│   └── 1706-03762-transformer/       # Example paper
+│   └── 1706-03762-transformer/      # Example paper
 │       ├── meta.md                 # Metadata (frontmatter + summary + abstract + translation)
 │       ├── analysis.md             # Detailed analysis report
 │       ├── qa.md                   # Q&A records
 │       └── code_analysis.md        # Code analysis (if applicable)
-├── topics/                         # Research topic surveys
+├── topics/                         # Research topic surveys & idea validation
 │   └── 3d-gaussian-splatting/
 │       ├── overview.md
-│       └── paper_list.md
+│       ├── paper_list.md
+│       ├── idea_source.md          # Original idea archive (idea mode only)
+│       ├── feasibility.md          # Feasibility report (idea mode only)
+│       ├── competitive_analysis.md # Competitive analysis (idea mode only)
+│       └── research_plan.md        # Research plan (idea mode only)
 └── daily/                          # Daily records
     ├── 2026-04-02.md               # Paper recommendations + knowledge outputs
     └── 2026-04-02_raw.csv          # Raw paper listing data

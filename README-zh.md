@@ -76,7 +76,7 @@ cd rose
 
 ### `/survey-topic` — 研究方向快速掌握
 
-给定研究方向或种子论文，通过多轮搜索生成结构化综述。支持两种模式：主题模式（通用搜索）和种子模式（基于已有论文定向搜索）。
+给定研究方向、种子论文或研究 idea 文档，通过多轮搜索生成结构化分析。支持三种模式：主题模式（通用搜索）、种子模式（基于已有论文定向搜索）和 Idea 验证模式（新颖性与可行性分析）。
 
 ```bash
 # 主题模式 — 从零搜索
@@ -88,11 +88,19 @@ cd rose
 
 # 混合模式 — 种子论文 + 指定主题
 /survey-topic 显式三维信息作为视频中间表示 --papers 2409.02095 2409.02048 2503.05638
+
+# Idea 验证模式 — 验证研究想法的新颖性和可行性
+/survey-topic --idea path/to/my-idea.md
+/survey-topic --idea "用 depth-aware attention 做 video inpainting"
 ```
 
 **种子模式**利用已有论文分析（meta.md、analysis.md）进行定向搜索：引用追踪、作者追踪、方法延伸、Baseline 溯源、最新进展。产出额外包含种子论文对比表和技术演进分析。
 
-**产出**：`library/topics/{slug}/overview.md`（综述）+ `paper_list.md`（论文列表）+ 核心论文的 meta stubs
+**Idea 验证模式**接受研究 idea 文档（结构化或自由笔记均可），执行对抗性调研：搜索直接冲突工作、方法先例、替代方案、组合要素重叠和并发工作。产出包括可行性分析报告（逐项新颖性评估）、竞争分析（逐篇对比）和研究计划（实验设计、Baseline、技术路线、投稿目标）。
+
+**产出**：
+- 主题/种子模式：`library/topics/{slug}/overview.md`（综述）+ `paper_list.md`（论文列表）+ 核心论文 meta stubs
+- Idea 验证模式：以上所有，另加 `idea_source.md`（原始 idea 存档）+ `feasibility.md`（可行性报告）+ `competitive_analysis.md`（竞争分析）+ `research_plan.md`（研究计划）
 
 ### `/analyze-code` — 代码仓库分析
 
@@ -165,18 +173,21 @@ cd rose
 library/
 ├── interests.md                    # 研究兴趣配置（关键词、领域、arxiv 分类）
 ├── tmp/                            # 临时论文（分析后未收藏的）
-│   └── 2604-01030-diff3r/
-│       └── meta.md
+│   └── ...
 ├── papers/                         # 正式收藏的论文
-│   └── 1706-03762-transformer/       # 示例论文
+│   └── 1706-03762-transformer/      # 示例论文
 │       ├── meta.md                 # 元信息（frontmatter + 概要 + abstract + 翻译）
 │       ├── analysis.md             # 详细分析报告
 │       ├── qa.md                   # Q&A 记录
 │       └── code_analysis.md        # 代码分析（如有）
-├── topics/                         # 研究方向综述
+├── topics/                         # 研究方向综述 & Idea 验证
 │   └── 3d-gaussian-splatting/
 │       ├── overview.md
-│       └── paper_list.md
+│       ├── paper_list.md
+│       ├── idea_source.md          # 原始 idea 存档（仅 idea 模式）
+│       ├── feasibility.md          # 可行性分析报告（仅 idea 模式）
+│       ├── competitive_analysis.md # 竞争分析（仅 idea 模式）
+│       └── research_plan.md        # 研究计划（仅 idea 模式）
 └── daily/                          # 每日记录
     ├── 2026-04-02.md               # 论文推荐 + 知识产出
     └── 2026-04-02_raw.csv          # 原始论文列表数据

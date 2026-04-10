@@ -60,6 +60,8 @@
 - [x] `library/README.md` 索引增强：新增发表日期、收集日期、来源 skill、一句话概述列
 - [x] `generate_index.py` 新增 `extract_summary()` 从概要总结提取首句，`collected_date` 支持文件 mtime 回退
 - [x] meta.md 规范新增 `source` 和 `collected_date` 字段
+- [x] `/survey-topic --idea` 研究 idea 验证与规划（可行性分析、竞争论文对比、研究计划生成）
+- [x] `/read-paper` AlphaXiv markdown 本地缓存（`alphaxiv-overview.md` / `alphaxiv-abs.md`）
 
 ---
 
@@ -225,6 +227,10 @@
 - ~~[2026-04-07] library/README.md 索引增强（发表日期、收集日期、来源、概述列）~~ [已整合 → v1.0.3]
 - ~~[2026-04-07] meta.md 新增 source 和 collected_date 字段~~ [已整合 → v1.0.3]
 
-### 待整理
+### 已整合（v1.0.3 续）
 
-（暂无）
+- ~~[2026-04-09] survey-topic --idea 模式：研究 idea 验证与规划（可行性分析、竞争论文对比、研究计划生成）~~ [已整合 → v1.0.3]
+- ~~[2026-04-10] read-paper AlphaXiv markdown 本地缓存（alphaxiv-overview.md / alphaxiv-abs.md）~~ [已整合 → v1.0.3]
+
+### 待整理
+- 新建一个skill：update-note：是将仓库中的论文，格式化提交到 Notion 数据库，并push到远程仓库作为备份

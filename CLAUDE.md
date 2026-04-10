@@ -24,7 +24,7 @@
 | `/read-paper` | 论文分析与 Q&A | `/read-paper 2401.12345` 首次分析；`--detailed` / `--brief` 指定深度；`--supplement repo:...` 补充信息源 |
 | `/analyze-code` | 独立代码仓库分析 | `/analyze-code /path/to/repo --paper 2401-12345`（不关联论文时使用，关联论文用 read-paper --repo） |
 | `/daily-papers` | 每日论文推荐 | `/daily-papers` 或 `/daily-papers --date 2024-01-15` |
-| `/survey-topic` | 研究方向快速掌握 | `/survey-topic 3D Gaussian Splatting`；种子模式：`/survey-topic --papers 2409.02095 2409.02048`；混合：`/survey-topic 显式3D作为视频表示 --papers 2409.02095 2409.02048 2503.05638` |
+| `/survey-topic` | 研究方向快速掌握 | `/survey-topic 3D Gaussian Splatting`；种子模式：`/survey-topic --papers 2409.02095 2409.02048`；混合：`/survey-topic 显式3D作为视频表示 --papers 2409.02095 2409.02048 2503.05638`；Idea 验证：`/survey-topic --idea path/to/idea.md` 或 `/survey-topic --idea "用depth-aware attention做video inpainting"` |
 | `/manage-library` | 本地库管理 | `/manage-library --search diffusion`、`--authors`、`--rate <id> <score>` |
 | `/session-digest` | 会话总结归档 | `/session-digest` 完整流程；`/session-digest --skip-optimize` 跳过优化建议 |
 | `/setup` | 首次使用引导 | `/setup` 交互式配置研究兴趣、关注作者 |
