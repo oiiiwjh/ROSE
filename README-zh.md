@@ -27,6 +27,20 @@ cd rose
 
 ## 功能一览
 
+### Skills 总览
+
+| Skill | 用途 | 核心能力 |
+|-------|------|----------|
+| `/read-paper` | 论文深度阅读与 Q&A | Arxiv/PDF 分析，深度选择（detailed/brief），代码仓库关联，分主题 Q&A（含 LaTeX），AlphaXiv 集成 |
+| `/daily-papers` | 每日论文推荐 | 兴趣筛选，作者追踪，批量抓取，交互选择，去重检查 |
+| `/survey-topic` | 研究方向快速掌握 | 主题搜索，种子论文模式（`--papers`），Idea 验证（`--idea`），结构化产出 |
+| `/analyze-code` | 代码仓库分析 | 独立分析或关联论文，模块级分析，论文-代码映射 |
+| `/manage-library` | 论文库管理 | 搜索、浏览、打标签、评分、临时论文转正、作者管理 |
+| `/session-digest` | 会话总结归档 | 知识记录、变更日志生成、Skill 优化建议 |
+| `/setup` | 首次使用引导 | 交互式配置研究兴趣、关注作者、arxiv 分类 |
+| `/publish` | 发布公共版本 | 干净提取、增量更新、自动 git 同步 |
+| `/update` | 检查并更新系统文件 | 远程 skill/文档更新，对话启动时自动检查 |
+
 ### `/read-paper` — 论文深度阅读
 
 分析一篇论文并生成结构化报告，支持选择分析深度、关联代码仓库、后续追问和补充信息源。
@@ -173,9 +187,10 @@ cd rose
 library/
 ├── interests.md                    # 研究兴趣配置（关键词、领域、arxiv 分类）
 ├── tmp/                            # 临时论文（分析后未收藏的）
-│   └── ...
+│   └── {arxiv_id}-{slug}/
+│       └── meta.md
 ├── papers/                         # 正式收藏的论文
-│   └── 1706-03762-transformer/      # 示例论文
+│   └── 1706-03762-transformer/     # 示例论文
 │       ├── meta.md                 # 元信息（frontmatter + 概要 + abstract + 翻译）
 │       ├── analysis.md             # 详细分析报告
 │       ├── qa.md                   # Q&A 记录

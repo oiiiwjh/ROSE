@@ -27,6 +27,20 @@ cd rose
 
 ## Features
 
+### Skills Overview
+
+| Skill | Purpose | Key Capabilities |
+|-------|---------|-----------------|
+| `/read-paper` | Deep paper reading & Q&A | Arxiv/PDF analysis, depth selection (detailed/brief), code repo linking, topic-grouped Q&A with LaTeX, AlphaXiv integration |
+| `/daily-papers` | Daily paper recommendations | Interest-based filtering, author tracking, batch fetch, interactive selection, dedup check |
+| `/survey-topic` | Research topic survey | Topic search, seed paper mode (`--papers`), idea validation (`--idea`), structured output |
+| `/analyze-code` | Code repository analysis | Standalone or paper-linked, module-level analysis, paper-code mapping |
+| `/manage-library` | Paper library management | Search, browse, tag, rate, promote tmp→papers, author management |
+| `/session-digest` | Session summary & archive | Knowledge record, changelog generation, skill optimization suggestions |
+| `/setup` | First-time setup | Interactive config of research interests, followed authors, arxiv categories |
+| `/publish` | Publish public version | Clean extraction, incremental update, auto git sync |
+| `/update` | Check & update system | Remote skill/doc update from GitHub, auto-check on conversation start |
+
 ### `/read-paper` — Deep Paper Reading
 
 Analyze a paper and generate a structured report. Supports analysis depth selection, code repository linking, follow-up Q&A, and supplementary sources.
@@ -173,9 +187,10 @@ Fetches latest skills, commands, and documentation from GitHub and safely update
 library/
 ├── interests.md                    # Research interest configuration (keywords, areas, arxiv categories)
 ├── tmp/                            # Temporary papers (analyzed but not yet collected)
-│   └── ...
+│   └── {arxiv_id}-{slug}/
+│       └── meta.md
 ├── papers/                         # Permanently collected papers
-│   └── 1706-03762-transformer/      # Example paper
+│   └── 1706-03762-transformer/     # Example paper
 │       ├── meta.md                 # Metadata (frontmatter + summary + abstract + translation)
 │       ├── analysis.md             # Detailed analysis report
 │       ├── qa.md                   # Q&A records

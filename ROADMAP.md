@@ -62,6 +62,7 @@
 - [x] meta.md 规范新增 `source` 和 `collected_date` 字段
 - [x] `/survey-topic --idea` 研究 idea 验证与规划（可行性分析、竞争论文对比、研究计划生成）
 - [x] `/read-paper` AlphaXiv markdown 本地缓存（`alphaxiv-overview.md` / `alphaxiv-abs.md`）
+- [x] `/read-paper` QA 分主题详细记录（`qa/` 子目录，frontmatter description 轻量扫描，`qa.md` 精简摘要）
 
 ---
 
@@ -231,6 +232,10 @@
 
 - ~~[2026-04-09] survey-topic --idea 模式：研究 idea 验证与规划（可行性分析、竞争论文对比、研究计划生成）~~ [已整合 → v1.0.3]
 - ~~[2026-04-10] read-paper AlphaXiv markdown 本地缓存（alphaxiv-overview.md / alphaxiv-abs.md）~~ [已整合 → v1.0.3]
+- ~~[2026-04-10] read-paper QA 分主题详细记录（qa/ 子目录 + frontmatter description 轻量扫描）~~ [已整合 → v1.0.3]
 
 ### 待整理
-- 新建一个skill：update-note：是将仓库中的论文，格式化提交到 Notion 数据库，并push到远程仓库作为备份
+（暂无）
+
+### 已规划（新增）
+- ~~[2026-04-10] update-note skill：将论文格式化提交到 Notion 数据库并 push 远程备份~~ [已规划 → v2.0]
