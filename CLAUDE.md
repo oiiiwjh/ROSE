@@ -1,6 +1,6 @@
 # ROSE — Research Operating System for Erudition
 
-> 当前版本: v1.0.3 | [变更日志](.claude/changelog/)
+> 当前版本: v1.0.4 | [变更日志](.claude/changelog/)
 
 基于 Claude Code Skills 的科研探索系统。通过 slash commands 实现论文阅读分析、每日推荐、方向调研等功能。
 
@@ -21,7 +21,7 @@
 
 | 命令 | 用途 | 示例 |
 |------|------|------|
-| `/read-paper` | 论文分析与 Q&A | `/read-paper 2401.12345` 首次分析；`--detailed` / `--brief` 指定深度；`--supplement repo:...` 补充信息源 |
+| `/read-paper` | 论文分析与 Q&A | `/read-paper 2401.12345` 首次分析；`--detailed` / `--brief` 指定深度；`--supplement repo:...` 补充信息源；分析后自动关联库存论文 |
 | `/analyze-code` | 独立代码仓库分析 | `/analyze-code /path/to/repo --paper 2401-12345`（不关联论文时使用，关联论文用 read-paper --repo） |
 | `/daily-papers` | 每日论文推荐 | `/daily-papers` 或 `/daily-papers --date 2024-01-15` |
 | `/survey-topic` | 研究方向快速掌握 | `/survey-topic 3D Gaussian Splatting`；种子模式：`/survey-topic --papers 2409.02095 2409.02048`；混合：`/survey-topic 显式3D作为视频表示 --papers 2409.02095 2409.02048 2503.05638`；Idea 验证：`/survey-topic --idea path/to/idea.md` 或 `/survey-topic --idea "用depth-aware attention做video inpainting"` |

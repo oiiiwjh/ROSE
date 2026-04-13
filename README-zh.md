@@ -31,7 +31,7 @@ cd rose
 
 | Skill | 用途 | 核心能力 |
 |-------|------|----------|
-| `/read-paper` | 论文深度阅读与 Q&A | Arxiv/PDF 分析，深度选择（detailed/brief），代码仓库关联，分主题 Q&A（含 LaTeX），AlphaXiv 集成 |
+| `/read-paper` | 论文深度阅读与 Q&A | Arxiv/PDF 分析，深度选择（detailed/brief），代码仓库关联，分主题 Q&A（含 LaTeX），AlphaXiv 集成，库存论文关联分析 |
 | `/daily-papers` | 每日论文推荐 | 兴趣筛选，作者追踪，批量抓取，交互选择，去重检查 |
 | `/survey-topic` | 研究方向快速掌握 | 主题搜索，种子论文模式（`--papers`），Idea 验证（`--idea`），结构化产出 |
 | `/analyze-code` | 代码仓库分析 | 独立分析或关联论文，模块级分析，论文-代码映射 |

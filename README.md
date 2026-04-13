@@ -31,7 +31,7 @@ cd rose
 
 | Skill | Purpose | Key Capabilities |
 |-------|---------|-----------------|
-| `/read-paper` | Deep paper reading & Q&A | Arxiv/PDF analysis, depth selection (detailed/brief), code repo linking, topic-grouped Q&A with LaTeX, AlphaXiv integration |
+| `/read-paper` | Deep paper reading & Q&A | Arxiv/PDF analysis, depth selection (detailed/brief), code repo linking, topic-grouped Q&A with LaTeX, AlphaXiv integration, library cross-reference |
 | `/daily-papers` | Daily paper recommendations | Interest-based filtering, author tracking, batch fetch, interactive selection, dedup check |
 | `/survey-topic` | Research topic survey | Topic search, seed paper mode (`--papers`), idea validation (`--idea`), structured output |
 | `/analyze-code` | Code repository analysis | Standalone or paper-linked, module-level analysis, paper-code mapping |
