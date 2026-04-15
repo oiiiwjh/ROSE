@@ -187,14 +187,11 @@ cd rose
 library/
 ├── interests.md                    # 研究兴趣配置（关键词、领域、arxiv 分类）
 ├── tmp/                            # 临时论文（分析后未收藏的）
-│   └── {arxiv_id}-{slug}/
-│       └── meta.md
+│   └── ...
 ├── papers/                         # 正式收藏的论文
 │   └── 1706-03762-transformer/     # 示例论文
 │       ├── meta.md                 # 元信息（frontmatter + 概要 + abstract + 翻译）
-│       ├── analysis.md             # 详细分析报告
-│       ├── qa.md                   # Q&A 记录
-│       └── code_analysis.md        # 代码分析（如有）
+│       └── analysis.md             # 详细分析报告
 ├── topics/                         # 研究方向综述 & Idea 验证
 │   └── 3d-gaussian-splatting/
 │       ├── overview.md
@@ -214,7 +211,7 @@ library/
 
 - arxiv ID 中的 `.` 替换为 `-`
 - method_slug 是论文核心方法/模型的简短英文标识
-- 示例：`2604-01030-diff3r`、`2602-08169-spherical-steering`
+- 示例：`1706-03762-transformer`、`2401-12345-nerf`
 
 ### meta.md 格式
 

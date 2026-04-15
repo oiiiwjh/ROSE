@@ -187,14 +187,11 @@ Fetches latest skills, commands, and documentation from GitHub and safely update
 library/
 ├── interests.md                    # Research interest configuration (keywords, areas, arxiv categories)
 ├── tmp/                            # Temporary papers (analyzed but not yet collected)
-│   └── {arxiv_id}-{slug}/
-│       └── meta.md
+│   └── ...
 ├── papers/                         # Permanently collected papers
 │   └── 1706-03762-transformer/     # Example paper
 │       ├── meta.md                 # Metadata (frontmatter + summary + abstract + translation)
-│       ├── analysis.md             # Detailed analysis report
-│       ├── qa.md                   # Q&A records
-│       └── code_analysis.md        # Code analysis (if applicable)
+│       └── analysis.md             # Detailed analysis report
 ├── topics/                         # Research topic surveys & idea validation
 │   └── 3d-gaussian-splatting/
 │       ├── overview.md
@@ -214,7 +211,7 @@ library/
 
 - `.` in arxiv ID replaced with `-`
 - method_slug is a short English identifier for the paper's core method/model
-- Examples: `2604-01030-diff3r`, `2602-08169-spherical-steering`
+- Examples: `1706-03762-transformer`, `2401-12345-nerf`
 
 ### meta.md Format
 
