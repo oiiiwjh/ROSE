@@ -31,7 +31,7 @@ cd rose
 
 | Skill | 用途 | 核心能力 |
 |-------|------|----------|
-| `/read-paper` | 论文深度阅读与 Q&A | Arxiv/PDF 分析，深度选择（detailed/brief），代码仓库关联，分主题 Q&A（含 LaTeX），AlphaXiv 集成，库存论文关联分析 |
+| `/read-paper` | 论文/博客分析与 Q&A | Arxiv/PDF/博客分析，深度选择（detailed/brief），代码仓库关联，分主题 Q&A（含 LaTeX），AlphaXiv 集成，库存论文关联分析 |
 | `/daily-papers` | 每日论文推荐 | 兴趣筛选，作者追踪，批量抓取，交互选择，去重检查 |
 | `/survey-topic` | 研究方向快速掌握 | 主题搜索，种子论文模式（`--papers`），Idea 验证（`--idea`），结构化产出 |
 | `/analyze-code` | 代码仓库分析 | 独立分析或关联论文，模块级分析，论文-代码映射 |
@@ -41,15 +41,16 @@ cd rose
 | `/publish` | 发布公共版本 | 干净提取、增量更新、自动 git 同步 |
 | `/update` | 检查并更新系统文件 | 远程 skill/文档更新，对话启动时自动检查 |
 
-### `/read-paper` — 论文深度阅读
+### `/read-paper` — 论文/博客分析
 
-分析一篇论文并生成结构化报告，支持选择分析深度、关联代码仓库、后续追问和补充信息源。
+分析一篇论文或博客/项目页面并生成结构化报告，支持选择分析深度、关联代码仓库、后续追问和补充信息源。
 
 ```bash
-# 首次分析（支持 arxiv URL、ID、本地 PDF）
+# 首次分析（支持 arxiv URL、ID、本地 PDF、博客/项目页面 URL）
 /read-paper 2401.12345
 /read-paper https://arxiv.org/abs/2401.12345
 /read-paper ./paper.pdf
+/read-paper https://blog.example.com/post
 
 # 直接指定分析深度
 /read-paper 2401.12345 --detailed    # 深度分析（详细拆解方法、公式、实验）
@@ -187,11 +188,18 @@ cd rose
 library/
 ├── interests.md                    # 研究兴趣配置（关键词、领域、arxiv 分类）
 ├── tmp/                            # 临时论文（分析后未收藏的）
-│   └── ...
+│   └── {arxiv_id}-{slug}/
+│       └── meta.md
 ├── papers/                         # 正式收藏的论文
-│   └── 1706-03762-transformer/     # 示例论文
+│   └── 1706-03762-transformer/
 │       ├── meta.md                 # 元信息（frontmatter + 概要 + abstract + 翻译）
-│       └── analysis.md             # 详细分析报告
+│       ├── analysis.md             # 详细分析报告
+│       ├── qa.md                   # Q&A 记录
+│       └── code_analysis.md        # 代码分析（如有）
+├── blogs/                          # 博客/项目页面分析
+│   └── {slug}/
+│       ├── meta.md                 # 元信息（frontmatter + 概要）
+│       └── analysis.md             # 分析报告
 ├── topics/                         # 研究方向综述 & Idea 验证
 │   └── 3d-gaussian-splatting/
 │       ├── overview.md
@@ -211,7 +219,7 @@ library/
 
 - arxiv ID 中的 `.` 替换为 `-`
 - method_slug 是论文核心方法/模型的简短英文标识
-- 示例：`1706-03762-transformer`、`2401-12345-nerf`
+- 示例：`2604-01030-diff3r`、`2602-08169-spherical-steering`
 
 ### meta.md 格式
 
@@ -227,6 +235,9 @@ url: "https://arxiv.org/abs/2604.01030"
 tags: [3dgs, feed-forward, differentiable-optimization]
 status: meta_only | analyzed | reviewed
 rating: 4  # 可选，1-5 评分
+content_type: paper  # paper | blog，内容类型
+source_site: ""  # 可选，博客内容来源站点名称
+related_papers: []  # 可选，关联论文的 arxiv ID 列表
 ---
 
 ## 概要总结

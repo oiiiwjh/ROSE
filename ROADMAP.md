@@ -74,6 +74,24 @@
 
 ---
 
+## v1.0.5 — Blog 支持与内容类型扩展 ✅
+
+在 v1.0.4 基础上扩展支持博客、项目页面等非论文内容。
+
+- [x] `/read-paper` 扩展支持 URL 输入（Blog 分支：WebFetch 抓取、元信息提取、关联论文检测）
+- [x] `content_type` 字段：paper | blog | project-page | thread | newsletter
+- [x] `library/blogs/` 收藏目录（blog 收藏至此，论文仍收至 papers/）
+- [x] Blog 分析模板适配（实证与演示 + 关键 Insight 段）
+- [x] `library/interests.md` 新增 `## Followed Blogs` 固定博客源配置
+- [x] `/daily-papers` 增加博客源检查与推荐
+- [x] `generate_index.py` 扫描范围增加 `library/blogs/`
+- [x] `/manage-library` 搜索/统计/评分范围增加 blogs
+- [x] Library 索引新增「阅读状态」列（待阅读/已分析/计划阅读/已精读）
+- [x] `/read-paper` 分析后询问是否加入阅读列表（Step 8c）
+- [x] `read-paper` Step 0 搜索范围补充 blogs/，URL 自动判断规则收紧
+
+---
+
 ## v1.5 — 体验打磨与智能推荐 🔜
 
 > 里程碑目标：完成后升级为 v1.1.0
@@ -246,8 +264,13 @@
 
 - ~~[2026-04-13] read-paper 库存论文关联分析：分析后自动扫描本地库，按 tags/作者/方法/Topics 四维度检测关联~~ [已整合 → v1.0.4]
 
+### 已整合（v1.0.5）
+
+- ~~[2026-04-21] Blog 支持：扩展 read-paper 支持博客/项目页面等非论文内容，新增 library/blogs/ 目录、Followed Blogs 订阅、daily-papers 博客源检查~~ [已整合 → v1.0.5]
+
 ### 待整理
-（暂无）
+- [2026-04-21] 订阅与推送功能：若 Followed Blogs 自动检查功能成熟，可考虑独立为订阅 skill，支持本地推送/邮件订阅
+- [2026-04-21] Notion MCP 集成优先级提升：配合订阅推送，实现论文分析结果同步到 Notion
 
 ### 已规划（新增）
 - ~~[2026-04-10] update-note skill：将论文格式化提交到 Notion 数据库并 push 远程备份~~ [已规划 → v2.0]

@@ -1,6 +1,6 @@
 # ROSE — Research Operating System for Erudition
 
-> 当前版本: v1.0.4 | [变更日志](.claude/changelog/)
+> 当前版本: v1.0.5 | [变更日志](.claude/changelog/)
 
 基于 Claude Code Skills 的科研探索系统。通过 slash commands 实现论文阅读分析、每日推荐、方向调研等功能。
 
@@ -11,8 +11,10 @@
 - `library/` — 所有研究数据存储
   - `library/README.md` — 自动生成的论文索引（由 `generate_index.py` 维护，勿手动编辑）
   - `library/interests.md` — 用户研究兴趣配置（影响推荐过滤）
+  - `library/reading_list.md` — 阅读队列（按优先级排序，QA 后自动移除）
   - `library/tmp/{arxiv_id}-{method_slug}/` — 临时论文（所有论文先进 tmp，确认收藏后转正）
   - `library/papers/{arxiv_id}-{method_slug}/` — 正式收藏的论文（meta.md, analysis.md, qa.md, sources.md, notes.md）
+  - `library/blogs/{YYYYMMDD}-{slug}/` — 收藏的博客/项目页面等非论文内容（meta.md, analysis.md, qa.md, sources.md, notes.md）
   - `library/topics/{slug}/` — 按研究方向存储（overview.md, paper_list.md）
   - `library/daily/{YYYY-MM-DD}.md` — 每日知识记录（论文推荐 + 会话知识产出）
 - `.claude/changelog/{YYYY-MM-DD}.md` — 系统功能变更日志（skill 变更、debug 修复等）
@@ -21,7 +23,7 @@
 
 | 命令 | 用途 | 示例 |
 |------|------|------|
-| `/read-paper` | 论文分析与 Q&A | `/read-paper 2401.12345` 首次分析；`--detailed` / `--brief` 指定深度；`--supplement repo:...` 补充信息源；分析后自动关联库存论文 |
+| `/read-paper` | 论文/博客分析与 Q&A | `/read-paper 2401.12345` 首次分析；`/read-paper https://blog.example.com/post` 分析博客；`--detailed` / `--brief` 指定深度；`--supplement repo:...` 补充信息源；分析后自动关联库存论文 |
 | `/analyze-code` | 独立代码仓库分析 | `/analyze-code /path/to/repo --paper 2401-12345`（不关联论文时使用，关联论文用 read-paper --repo） |
 | `/daily-papers` | 每日论文推荐 | `/daily-papers` 或 `/daily-papers --date 2024-01-15` |
 | `/survey-topic` | 研究方向快速掌握 | `/survey-topic 3D Gaussian Splatting`；种子模式：`/survey-topic --papers 2409.02095 2409.02048`；混合：`/survey-topic 显式3D作为视频表示 --papers 2409.02095 2409.02048 2503.05638`；Idea 验证：`/survey-topic --idea path/to/idea.md` 或 `/survey-topic --idea "用depth-aware attention做video inpainting"` |
@@ -34,6 +36,7 @@
 ## 约定
 
 - 论文目录名：`{arxiv_id}-{method_slug}`，其中 arxiv ID 的 `.` 替换为 `-`，method_slug 是论文核心方法/模型的简短英文标识（如 `2401-12345-nerf`、`2503-08017-adaptive-token-pruning`）
+- 博客目录名：`{YYYYMMDD}-{slug}`，日期为发布日期（无法获取时用抓取日期），slug 为核心方法/主题的简短英文标识（如 `20260415-claude-code-best-practices`）
 - 日期格式：ISO `YYYY-MM-DD`
 - 分析输出语言：中文为主
 - meta.md 使用 YAML frontmatter
@@ -48,6 +51,7 @@ authors: ["Author 1", "Author 2"]
 date: "2024-01-15"
 arxiv_id: "2401.12345"
 url: "https://arxiv.org/abs/2401.12345"
+content_type: paper  # paper | blog | project-page | thread | newsletter，默认 paper
 tags: [diffusion, image-generation]
 status: meta_only | analyzed | reviewed
 rating: 4  # 可选，1-5 评分
@@ -55,6 +59,8 @@ repo: "https://github.com/author/repo"  # 可选，关联代码仓库
 supplements: ["twitter:https://...", "blog:https://..."]  # 可选，补充信息源
 source: daily-papers  # 来源 skill（daily-papers / read-paper / survey-topic）
 collected_date: "2026-04-07"  # 收集到 library 的日期
+source_site: "Blog Site Name"  # 可选，仅 blog 类型，来源站点名
+related_papers: ["2401.12345"]  # 可选，仅 blog 类型，关联的 arxiv 论文
 ---
 
 ## 概要总结
@@ -76,6 +82,25 @@ collected_date: "2026-04-07"  # 收集到 library 的日期
 - 如果有更新：简短告知用户（如："ROSE 有 N 个系统文件更新可用（v1.0.1 → v1.0.2），运行 `/update` 查看详情"），然后继续处理用户的请求
 - 如果无更新或网络不通：不输出任何内容，直接处理用户请求
 - 不要阻断用户的工作流，只展示一行提示即可
+
+## 阅读状态定义
+
+收藏内容（papers/ 和 blogs/）的阅读状态分为四层，由 `generate_index.py` 自动判定并展示在 Library 索引表中：
+
+| 状态 | 图标 | 判据 | 含义 |
+|------|------|------|------|
+| 待阅读 | ⬚ | 仅 `meta.md`，无 `analysis.md` | 尚未分析 |
+| 已分析 | 📝 | 有 `analysis.md`，无 `qa.md`，不在 reading_list | 浅读/Claude 分析过，积压待精读 |
+| 计划阅读 | 📖 | 在 `reading_list.md` 中 | 用户主动标记要精读 |
+| 已精读 | ✅ | 有 `qa.md` | 用户做过互动问答，深度消化 |
+
+## 阅读列表提醒
+
+每次新对话开始时（与自动更新检查同时），读取 `library/reading_list.md`：
+- 如果有待读条目：简短提醒（如："📚 阅读列表还有 N 篇待精读，最高优先级：《Paper Title》"）
+- 如果列表为空或文件不存在：不输出任何内容
+- 不阻断用户工作流，只展示一行提示
+- "已精读"判据：内容目录（`library/papers/`、`library/blogs/` 或 `library/tmp/`）下存在 `qa.md` 文件（用户做过 QA 互动）
 
 ## 演进方式
 

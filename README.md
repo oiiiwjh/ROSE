@@ -31,7 +31,7 @@ cd rose
 
 | Skill | Purpose | Key Capabilities |
 |-------|---------|-----------------|
-| `/read-paper` | Deep paper reading & Q&A | Arxiv/PDF analysis, depth selection (detailed/brief), code repo linking, topic-grouped Q&A with LaTeX, AlphaXiv integration, library cross-reference |
+| `/read-paper` | Paper/blog analysis & Q&A | Arxiv/PDF/blog analysis, depth selection (detailed/brief), code repo linking, topic-grouped Q&A with LaTeX, AlphaXiv integration, library cross-reference |
 | `/daily-papers` | Daily paper recommendations | Interest-based filtering, author tracking, batch fetch, interactive selection, dedup check |
 | `/survey-topic` | Research topic survey | Topic search, seed paper mode (`--papers`), idea validation (`--idea`), structured output |
 | `/analyze-code` | Code repository analysis | Standalone or paper-linked, module-level analysis, paper-code mapping |
@@ -41,15 +41,16 @@ cd rose
 | `/publish` | Publish public version | Clean extraction, incremental update, auto git sync |
 | `/update` | Check & update system | Remote skill/doc update from GitHub, auto-check on conversation start |
 
-### `/read-paper` — Deep Paper Reading
+### `/read-paper` — Paper & Blog Analysis
 
-Analyze a paper and generate a structured report. Supports analysis depth selection, code repository linking, follow-up Q&A, and supplementary sources.
+Analyze a paper or blog/project page and generate a structured report. Supports analysis depth selection, code repository linking, follow-up Q&A, and supplementary sources.
 
 ```bash
-# First analysis (supports arxiv URL, ID, local PDF)
+# First analysis (supports arxiv URL, ID, local PDF, blog/project page URL)
 /read-paper 2401.12345
 /read-paper https://arxiv.org/abs/2401.12345
 /read-paper ./paper.pdf
+/read-paper https://blog.example.com/post
 
 # Specify analysis depth directly
 /read-paper 2401.12345 --detailed    # Deep analysis (methods, formulas, experiments)
@@ -187,11 +188,18 @@ Fetches latest skills, commands, and documentation from GitHub and safely update
 library/
 ├── interests.md                    # Research interest configuration (keywords, areas, arxiv categories)
 ├── tmp/                            # Temporary papers (analyzed but not yet collected)
-│   └── ...
+│   └── {arxiv_id}-{slug}/
+│       └── meta.md
 ├── papers/                         # Permanently collected papers
-│   └── 1706-03762-transformer/     # Example paper
+│   └── 1706-03762-transformer/
 │       ├── meta.md                 # Metadata (frontmatter + summary + abstract + translation)
-│       └── analysis.md             # Detailed analysis report
+│       ├── analysis.md             # Detailed analysis report
+│       ├── qa.md                   # Q&A records
+│       └── code_analysis.md        # Code analysis (if applicable)
+├── blogs/                          # Blog & project page analyses
+│   └── {slug}/
+│       ├── meta.md                 # Metadata (frontmatter + summary)
+│       └── analysis.md             # Analysis report
 ├── topics/                         # Research topic surveys & idea validation
 │   └── 3d-gaussian-splatting/
 │       ├── overview.md
@@ -211,7 +219,7 @@ library/
 
 - `.` in arxiv ID replaced with `-`
 - method_slug is a short English identifier for the paper's core method/model
-- Examples: `1706-03762-transformer`, `2401-12345-nerf`
+- Examples: `2604-01030-diff3r`, `2602-08169-spherical-steering`
 
 ### meta.md Format
 
@@ -227,6 +235,9 @@ url: "https://arxiv.org/abs/2604.01030"
 tags: [3dgs, feed-forward, differentiable-optimization]
 status: meta_only | analyzed | reviewed
 rating: 4  # Optional, 1-5 rating
+content_type: paper  # paper | blog, type of content
+source_site: ""  # Optional, for blog content: origin site name
+related_papers: []  # Optional, arxiv IDs of related papers
 ---
 
 ## Summary

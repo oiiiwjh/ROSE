@@ -23,6 +23,9 @@ description: "本地论文库管理。搜索、浏览、统计、打标签、评
 - `--clear-tmp`: 清空 tmp 中的所有临时论文
 - `--authors`: 查看关注的作者列表及统计
 - `--rate <paper_id> <score>`: 为论文评分（1-5）或修改评分
+- `--reading-list`: 查看当前阅读列表
+- `--add-reading <paper_id> [--priority high|mid|low]`: 将论文加入阅读列表
+- `--remove-reading <paper_id>`: 从阅读列表移除论文
 
 ## 每次调用前置：tmp 论文整理
 
@@ -49,7 +52,7 @@ description: "本地论文库管理。搜索、浏览、统计、打标签、评
 
 ### 4. 执行
 
-- 用户选中的论文：将整个目录从 `library/tmp/` 移动到 `library/papers/`
+- 用户选中的内容：将整个目录从 `library/tmp/` 移动到对应目录（根据 meta.md 中的 `content_type`：`paper` → `library/papers/`，其他 → `library/blogs/`）
 - 未选中的：保持不动
 
 如果 `library/tmp/` 为空，跳过此步骤，直接进入下方操作。
@@ -70,15 +73,17 @@ python3 .claude/skills/manage-library/generate_index.py
 
 1. 统计 `library/papers/` 下的正式论文数
 2. 统计 `library/tmp/` 下的临时论文数
-3. 统计已分析（有 analysis.md）和未分析（仅 meta.md）的数量
-4. 统计 `library/topics/` 下的方向综述数量
-5. 统计 `library/daily/` 下的每日推荐数量
-6. 列出最近 5 篇正式论文的标题
+3. 统计 `library/blogs/` 下的收藏博客数
+4. 统计已分析（有 analysis.md）和未分析（仅 meta.md）的数量
+5. 统计 `library/topics/` 下的方向综述数量
+6. 统计 `library/daily/` 下的每日推荐数量
+7. 列出最近 5 篇正式论文的标题
 
 输出格式:
 ```
 📊 ROSE Library 统计
 - 论文总数: X 篇（已分析: Y / 未分析: Z）
+- 收藏博客: B 篇
 - 方向综述: N 个
 - 每日推荐: M 天
 - 最近论文:
@@ -90,11 +95,12 @@ python3 .claude/skills/manage-library/generate_index.py
 
 1. 在 `library/papers/` 下搜索所有 `meta.md` 和 `analysis.md` 中包含 query 的内容
 2. 在 `library/topics/` 下搜索
-3. 展示匹配结果，包括文件路径和匹配行
+3. 在 `library/blogs/` 下搜索所有 `meta.md` 和 `analysis.md` 中包含 query 的内容
+4. 展示匹配结果，包括文件路径和匹配行
 
 ### --list recent
 
-1. 读取所有 `library/papers/*/meta.md` 的 date 字段
+1. 读取所有 `library/papers/*/meta.md` 和 `library/blogs/*/meta.md` 的 date 字段
 2. 按日期倒序排列
 3. 展示列表: 标题、日期、arxiv ID、状态
 
@@ -131,7 +137,7 @@ python3 .claude/skills/manage-library/generate_index.py
 
 ### --rate <paper_id> <score>
 
-1. 根据 paper_id 前缀在 `library/papers/` 和 `library/tmp/` 下匹配论文目录
+1. 根据 paper_id 前缀在 `library/papers/`、`library/blogs/` 和 `library/tmp/` 下匹配目录
 2. 读取 meta.md，更新或添加 `rating: <score>` 字段（score 为 1-5 整数）
 3. 如果新评分 ≥4 且之前评分 <4（或无评分）：将该论文的所有作者加入 `library/interests.md` 的 `## Followed Authors`（更新 count 和 last_paper）
 4. 如果新评分 <4 且之前 ≥4：不移除作者（只加不减）
@@ -140,6 +146,27 @@ python3 .claude/skills/manage-library/generate_index.py
 ### 操作后更新索引
 
 `--tag`、`--rate`、`--promote`、`--clean` 等修改操作完成后，运行 `python3 .claude/skills/manage-library/generate_index.py` 刷新 `library/README.md`。
+
+### --reading-list
+
+1. 读取 `library/reading_list.md`，展示当前阅读队列
+2. 如果列表为空，提示"阅读列表为空"
+3. 对每篇论文补充显示：是否已有 qa.md（即是否已读但未从列表移除）
+
+### --add-reading <paper_id> [--priority high|mid|low]
+
+1. 根据 paper_id 前缀在 `library/papers/`、`library/blogs/` 和 `library/tmp/` 下匹配目录
+2. 读取 meta.md 获取论文标题
+3. 优先级映射：high → 🔴 高、mid → 🟡 中（默认）、low → ⚪ 低
+4. 检查 `library/reading_list.md` 是否已包含该论文，避免重复
+5. 在对应优先级区域按收集日期升序插入新行
+6. 展示更新结果
+
+### --remove-reading <paper_id>
+
+1. 在 `library/reading_list.md` 中匹配 paper_id（按 arxiv ID 或目录名），同时在 `library/papers/`、`library/blogs/` 和 `library/tmp/` 下匹配目录
+2. 移除匹配行
+3. 展示更新结果
 
 ### --clean
 

@@ -118,6 +118,7 @@ GitHub 仓库地址：`https://github.com/oiiiwjh/ROSE`
 README*.md                     — 自动扫描所有语言版本（README.md, README-zh.md, ...）
 CLAUDE.md
 ROADMAP.md
+SUPERPOWERS-GUIDE.md
 config.md
 ```
 

@@ -39,6 +39,20 @@ def extract_summary(text):
     return m.group(1).strip()
 
 
+def parse_reading_list(library_dir):
+    """Parse reading_list.md and return a set of directory names in the list."""
+    rl_path = os.path.join(library_dir, 'reading_list.md')
+    dirs_in_list = set()
+    if not os.path.isfile(rl_path):
+        return dirs_in_list
+    with open(rl_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            # Match markdown links like [Title](papers/2401-12345-nerf/) or (tmp/xxx/)
+            for m in re.finditer(r'\]\((?:papers|blogs|tmp)/([^/)]+)/?\)', line):
+                dirs_in_list.add(m.group(1))
+    return dirs_in_list
+
+
 def scan_papers(library_dir, subdir):
     """Scan a subdirectory for paper meta.md files."""
     papers = []
@@ -54,9 +68,12 @@ def scan_papers(library_dir, subdir):
             if fm:
                 fm['_dir'] = entry
                 fm['_subdir'] = subdir
-                # Check if analysis.md exists
+                # Check if analysis.md and qa.md exist
                 fm['_has_analysis'] = os.path.isfile(
                     os.path.join(target, entry, 'analysis.md')
+                )
+                fm['_has_qa'] = os.path.isfile(
+                    os.path.join(target, entry, 'qa.md')
                 )
                 # Extract summary from body
                 fm['_summary'] = extract_summary(content)
@@ -70,13 +87,26 @@ def scan_papers(library_dir, subdir):
     return papers
 
 
+def reading_status(paper, reading_list_dirs):
+    """Determine reading status: 已精读 / 计划阅读 / 已分析 / 待阅读."""
+    if paper.get('_has_qa'):
+        return '✅ 已精读'
+    if paper.get('_dir') in reading_list_dirs:
+        return '📖 计划阅读'
+    if paper.get('_has_analysis'):
+        return '📝 已分析'
+    return '⬚ 待阅读'
+
+
 def generate_readme(library_dir):
     """Generate the README.md content."""
     collected = scan_papers(library_dir, 'papers')
+    blogged = scan_papers(library_dir, 'blogs')
     temporary = scan_papers(library_dir, 'tmp')
+    reading_list_dirs = parse_reading_list(library_dir)
 
-    n_analyzed = sum(1 for p in collected + temporary if p.get('status') == 'analyzed' or p.get('_has_analysis'))
-    n_meta_only = len(collected) + len(temporary) - n_analyzed
+    n_analyzed = sum(1 for p in collected + blogged + temporary if p.get('status') == 'analyzed' or p.get('_has_analysis'))
+    n_meta_only = len(collected) + len(blogged) + len(temporary) - n_analyzed
 
     now = datetime.now().strftime('%Y-%m-%d %H:%M')
 
@@ -91,7 +121,8 @@ def generate_readme(library_dir):
     lines.append('')
     lines.append('| 指标 | 数量 |')
     lines.append('|------|------|')
-    lines.append(f'| 正式收藏 | {len(collected)} |')
+    lines.append(f'| 正式收藏(论文) | {len(collected)} |')
+    lines.append(f'| 正式收藏(Blog) | {len(blogged)} |')
     lines.append(f'| 临时/待整理 | {len(temporary)} |')
     lines.append(f'| 已深度分析 | {n_analyzed} |')
     lines.append(f'| 仅元数据 | {n_meta_only} |')
@@ -101,8 +132,8 @@ def generate_readme(library_dir):
     lines.append('## 正式收藏 (library/papers/)')
     lines.append('')
     if collected:
-        lines.append('| 论文 | 发表日期 | 收集日期 | 来源 | 评分 | 概述 |')
-        lines.append('|------|----------|----------|------|------|------|')
+        lines.append('| 论文 | 发表日期 | 收集日期 | 来源 | 评分 | 阅读状态 | 概述 |')
+        lines.append('|------|----------|----------|------|------|----------|------|')
         for p in collected:
             title = p.get('title', p['_dir'])
             link = f'[{title}](papers/{p["_dir"]}/)'
@@ -112,8 +143,31 @@ def generate_readme(library_dir):
             rating = p.get('rating', '')
             if rating:
                 rating = f'{"⭐" * int(rating)}'
+            status = reading_status(p, reading_list_dirs)
             summary = p.get('_summary', '')
-            lines.append(f'| {link} | {date} | {collected_date} | {source} | {rating} | {summary} |')
+            lines.append(f'| {link} | {date} | {collected_date} | {source} | {rating} | {status} | {summary} |')
+    else:
+        lines.append('*暂无*')
+    lines.append('')
+
+    # Blog collection
+    lines.append('## 收藏博客 (library/blogs/)')
+    lines.append('')
+    if blogged:
+        lines.append('| 标题 | 日期 | 收集日期 | 来源站点 | 评分 | 阅读状态 | 概述 |')
+        lines.append('|------|------|----------|----------|------|----------|------|')
+        for p in blogged:
+            title = p.get('title', p['_dir'])
+            link = f'[{title}](blogs/{p["_dir"]}/)'
+            date = p.get('date', '')
+            collected_date = p.get('collected_date', '')
+            source_site = p.get('source_site', '')
+            rating = p.get('rating', '')
+            if rating:
+                rating = f'{"⭐" * int(rating)}'
+            status = reading_status(p, reading_list_dirs)
+            summary = p.get('_summary', '')
+            lines.append(f'| {link} | {date} | {collected_date} | {source_site} | {rating} | {status} | {summary} |')
     else:
         lines.append('*暂无*')
     lines.append('')
