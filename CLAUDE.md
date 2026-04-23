@@ -1,6 +1,6 @@
 # ROSE — Research Operating System for Erudition
 
-> 当前版本: v1.0.5 | [变更日志](.claude/changelog/)
+> 当前版本: v1.0.6 | [变更日志](.claude/changelog/)
 
 基于 Claude Code Skills 的科研探索系统。通过 slash commands 实现论文阅读分析、每日推荐、方向调研等功能。
 

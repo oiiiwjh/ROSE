@@ -191,17 +191,15 @@ library/
 │   └── {arxiv_id}-{slug}/
 │       └── meta.md
 ├── papers/                         # 正式收藏的论文
-│   └── 1706-03762-transformer/
+│   └── 1706-03762-transformer/     # 示例论文
 │       ├── meta.md                 # 元信息（frontmatter + 概要 + abstract + 翻译）
-│       ├── analysis.md             # 详细分析报告
-│       ├── qa.md                   # Q&A 记录
-│       └── code_analysis.md        # 代码分析（如有）
+│       └── analysis.md             # 详细分析报告
 ├── blogs/                          # 博客/项目页面分析
 │   └── {slug}/
 │       ├── meta.md                 # 元信息（frontmatter + 概要）
 │       └── analysis.md             # 分析报告
 ├── topics/                         # 研究方向综述 & Idea 验证
-│   └── 3d-gaussian-splatting/
+│   └── {topic-slug}/
 │       ├── overview.md
 │       ├── paper_list.md
 │       ├── idea_source.md          # 原始 idea 存档（仅 idea 模式）
@@ -209,8 +207,8 @@ library/
 │       ├── competitive_analysis.md # 竞争分析（仅 idea 模式）
 │       └── research_plan.md        # 研究计划（仅 idea 模式）
 └── daily/                          # 每日记录
-    ├── 2026-04-02.md               # 论文推荐 + 知识产出
-    └── 2026-04-02_raw.csv          # 原始论文列表数据
+    ├── {YYYY-MM-DD}.md             # 论文推荐 + 知识产出
+    └── {YYYY-MM-DD}_raw.csv        # 原始论文列表数据
 ```
 
 ### 论文目录命名规则
@@ -219,7 +217,7 @@ library/
 
 - arxiv ID 中的 `.` 替换为 `-`
 - method_slug 是论文核心方法/模型的简短英文标识
-- 示例：`2604-01030-diff3r`、`2602-08169-spherical-steering`
+- 示例：`1706-03762-transformer`、`2401-12345-nerf`
 
 ### meta.md 格式
 

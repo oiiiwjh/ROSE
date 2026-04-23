@@ -191,17 +191,15 @@ library/
 │   └── {arxiv_id}-{slug}/
 │       └── meta.md
 ├── papers/                         # Permanently collected papers
-│   └── 1706-03762-transformer/
+│   └── 1706-03762-transformer/     # Example paper
 │       ├── meta.md                 # Metadata (frontmatter + summary + abstract + translation)
-│       ├── analysis.md             # Detailed analysis report
-│       ├── qa.md                   # Q&A records
-│       └── code_analysis.md        # Code analysis (if applicable)
+│       └── analysis.md             # Detailed analysis report
 ├── blogs/                          # Blog & project page analyses
 │   └── {slug}/
 │       ├── meta.md                 # Metadata (frontmatter + summary)
 │       └── analysis.md             # Analysis report
 ├── topics/                         # Research topic surveys & idea validation
-│   └── 3d-gaussian-splatting/
+│   └── {topic-slug}/
 │       ├── overview.md
 │       ├── paper_list.md
 │       ├── idea_source.md          # Original idea archive (idea mode only)
@@ -209,8 +207,8 @@ library/
 │       ├── competitive_analysis.md # Competitive analysis (idea mode only)
 │       └── research_plan.md        # Research plan (idea mode only)
 └── daily/                          # Daily records
-    ├── 2026-04-02.md               # Paper recommendations + knowledge outputs
-    └── 2026-04-02_raw.csv          # Raw paper listing data
+    ├── {YYYY-MM-DD}.md             # Paper recommendations + knowledge outputs
+    └── {YYYY-MM-DD}_raw.csv        # Raw paper listing data
 ```
 
 ### Paper Directory Naming Convention
@@ -219,7 +217,7 @@ library/
 
 - `.` in arxiv ID replaced with `-`
 - method_slug is a short English identifier for the paper's core method/model
-- Examples: `2604-01030-diff3r`, `2602-08169-spherical-steering`
+- Examples: `1706-03762-transformer`, `2401-12345-nerf`
 
 ### meta.md Format
 
